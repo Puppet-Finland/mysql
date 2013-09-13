@@ -25,6 +25,10 @@
 #
 class mysql {
 
+# Rationale for this is explained in init.pp of the sshd module
+if hiera('manage_mysql') != 'false' {
+
     include mysql::install
     include mysql::service
+}
 }
