@@ -5,9 +5,11 @@
 #
 class mysql::service {
 
-    service { 'service-mysql-mysql':
+    include mysql::params
+
+    service { 'mysql-mysql':
         enable => true,
-        name => 'mysql',
+        name => "${::mysql::params::service_name}",
         require => Class['mysql::install'],
     }
 }

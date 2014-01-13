@@ -4,6 +4,10 @@
 # Class to install and configure MySQL server. Currently does not support MySQL 
 # server configuration.
 #
+# [*email*]
+#   Email address for notifications from monit. Defaults to top-scope variable 
+#   $::servermonitor.
+#
 # == Parameters
 #
 # None at the moment
@@ -23,12 +27,23 @@
 # BSD-lisence
 # See file LICENSE for details
 #
-class mysql {
+class mysql
+(
+    $email = $::servermonitor
+)
+{
 
 # Rationale for this is explained in init.pp of the sshd module
 if hiera('manage_mysql', 'true') != 'false' {
 
     include mysql::install
     include mysql::service
+
+    if tagged('monit') {
+        class { 'mysql::monit':
+            monitor_email => $email,
+        }
+    }
+
 }
 }

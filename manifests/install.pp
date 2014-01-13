@@ -5,8 +5,10 @@
 #
 class mysql::install {
 
+    include mysql::params
+
     package { 'mysql-server':
         ensure => installed,
-        name => 'mysql-server',
+        name => "${::mysql::params::package_name}",
     }
 }
