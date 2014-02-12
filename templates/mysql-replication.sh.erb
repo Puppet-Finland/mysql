@@ -1,0 +1,44 @@
+#!/bin/sh
+
+MYSQL_USER=<%= mysql_user %>
+MYSQL_PASSWORD=<%= mysql_password %>
+MYSQL_EXECUTABLE=<%= scope.lookupvar('mysql::params::mysql_executable') %>
+MAX_SECONDS_BEHIND_MASTER=<%= max_seconds_behind_master %>
+
+retval=0
+
+echoerr() {
+    echo $@ 1>&2
+}
+
+query_slave_status() {
+    $MYSQL_EXECUTABLE -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --vertical -e "SHOW SLAVE STATUS"|grep "$1"|sed s/"^ *"//g
+}
+
+SLAVE_IO_STATUS=$(query_slave_status "Slave_IO_Running")
+SLAVE_SQL_STATUS=$(query_slave_status "Slave_SQL_Running")
+SECONDS_BEHIND_MASTER=$(query_slave_status "Seconds_Behind_Master")
+
+if ! [ "$SLAVE_IO_STATUS" = "Slave_IO_Running: Yes" ]
+then
+    echoerr $SLAVE_IO_STATUS
+    retval=1
+fi
+
+if ! [ "$SLAVE_SQL_STATUS" = "Slave_SQL_Running: Yes" ]
+then
+    echoerr $SLAVE_SQL_STATUS
+    retval=1
+fi
+
+# Mysql slaves replication can lag behind even in normal circumstances, so we
+# don't need to panic if Seconds_Behind_Master is not 0.
+SECS=$(echo $SECONDS_BEHIND_MASTER|tr -d " "|cut -d ":" -f 2)
+
+if [ $SECS -ge $MAX_SECONDS_BEHIND_MASTER ]
+then
+    echoerr $SLAVE_SECONDS_BEHIND_MASTER
+    retval=1
+fi
+
+exit $retval

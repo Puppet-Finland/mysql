@@ -8,6 +8,7 @@ class mysql::params {
     case $::osfamily {
         'RedHat': {
             $package_name = 'mysql-server'
+            $mysql_executable = '/usr/bin/mysql'
             $pidfile = '/var/run/mysqld/mysqld.pid'
             $service_name = 'mysqld'
 
@@ -21,6 +22,7 @@ class mysql::params {
         }
         'Debian': {
             $package_name = 'mysql-server'
+            $mysql_executable = '/usr/bin/mysql'
             $service_name = 'mysql'
             $service_start = "/usr/sbin/service $service_name start"
             $service_stop = "/usr/sbin/service $service_name stop"
@@ -28,6 +30,7 @@ class mysql::params {
         }
         'FreeBSD': {
             $package_name = 'mysql55-server'
+            $mysql_executable = '/usr/local/bin/mysql'
             $service_name = 'mysql-server'
             $service_start = "/usr/local/etc/$service_name start"
             $service_stop = "/usr/local/etc/$service_name stop"
