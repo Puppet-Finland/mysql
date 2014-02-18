@@ -3,6 +3,20 @@
 #
 # Verify that mysql slave is replicating properly
 #
+# == Parameters
+#
+# [*monitor_email*]
+#   Where to send email reports of replication problems. Defaults to global 
+#   variable $::servermonitor.
+# [*mysql_user*]
+#   User used to connect to the mysql server.
+# [*mysql_password*]
+#   Password for the mysql user.
+# [*max_seconds_behind_master*]
+#   Maximum value of the "Seconds behind master" variable. In general, if the 
+#   value is large or growing, then there is something wrong with replication. 
+#   Defaults to '600'.
+#
 class mysql::monit::slave
 (
     $monitor_email = $::servermonitor,
@@ -13,6 +27,7 @@ class mysql::monit::slave
 {
 
     include monit::params
+    include mysql::params
 
     # Monit fragment for handling mysql replication checks
     monit::fragment { 'mysql-mysql-replication.monit':
