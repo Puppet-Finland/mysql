@@ -17,17 +17,29 @@ query_slave_status() {
 
 SLAVE_IO_STATUS=$(query_slave_status "Slave_IO_Running")
 SLAVE_SQL_STATUS=$(query_slave_status "Slave_SQL_Running")
+LAST_ERRNO=$(query_slave_status "Last_Errno")
+LAST_ERROR=$(query_slave_status "Last_Error")
 SECONDS_BEHIND_MASTER=$(query_slave_status "Seconds_Behind_Master")
 
 if ! [ "$SLAVE_IO_STATUS" = "Slave_IO_Running: Yes" ]
 then
+    echoerr
     echoerr $SLAVE_IO_STATUS
     retval=1
 fi
 
 if ! [ "$SLAVE_SQL_STATUS" = "Slave_SQL_Running: Yes" ]
 then
+    echoerr
     echoerr $SLAVE_SQL_STATUS
+    retval=1
+fi
+
+if ! [ "$LAST_ERRNO" = "Last_Errno: 0" ]
+then
+    echoerr
+    echoerr $LAST_ERRNO
+    echoerr $LAST_ERROR
     retval=1
 fi
 
@@ -37,6 +49,7 @@ SECS=$(echo $SECONDS_BEHIND_MASTER|tr -d " "|cut -d ":" -f 2)
 
 if [ $SECS -ge $MAX_SECONDS_BEHIND_MASTER ]
 then
+    echoerr
     echoerr $SLAVE_SECONDS_BEHIND_MASTER
     retval=1
 fi
