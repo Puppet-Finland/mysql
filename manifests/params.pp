@@ -9,6 +9,7 @@ class mysql::params {
         'RedHat': {
             $package_name = 'mysql-server'
             $mysql_executable = '/usr/bin/mysql'
+            $mktemp_executable = '/bin/mktemp'
             $pidfile = '/var/run/mysqld/mysqld.pid'
             $service_name = 'mysqld'
 
@@ -23,6 +24,7 @@ class mysql::params {
         'Debian': {
             $package_name = 'mysql-server'
             $mysql_executable = '/usr/bin/mysql'
+            $mktemp_executable = '/bin/mktemp'
             $service_name = 'mysql'
             $service_start = "/usr/sbin/service $service_name start"
             $service_stop = "/usr/sbin/service $service_name stop"
@@ -31,6 +33,7 @@ class mysql::params {
         'FreeBSD': {
             $package_name = 'mysql55-server'
             $mysql_executable = '/usr/local/bin/mysql'
+            $mktemp_executable = '/usr/bin/mktemp'
             $service_name = 'mysql-server'
             $service_start = "/usr/local/etc/$service_name start"
             $service_stop = "/usr/local/etc/$service_name stop"
@@ -38,6 +41,8 @@ class mysql::params {
         }
         default: {
             $package_name = 'mysql-server'
+            $mysql_executable = '/usr/bin/mysql'
+            $mktemp_executable = '/bin/mktemp'
             $service_name = 'mysql'
             $service_start = "/usr/sbin/service $service_name start"
             $service_stop = "/usr/sbin/service $service_name stop"

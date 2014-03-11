@@ -15,14 +15,15 @@
 # [*max_seconds_behind_master*]
 #   Maximum value of the "Seconds behind master" variable. In general, if the 
 #   value is large or growing, then there is something wrong with replication. 
-#   Defaults to '600'.
+#   This value can be surprisingly large even in "normal" circumstances, so the 
+#   default value is set to '3600'.
 #
 class mysql::monit::slave
 (
     $monitor_email = $::servermonitor,
     $mysql_user,
     $mysql_password,
-    $max_seconds_behind_master = '600'
+    $max_seconds_behind_master = '3600'
 )
 {
 

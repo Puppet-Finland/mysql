@@ -1,8 +1,8 @@
 #
 # == Class: mysql
 #
-# Class to install and configure MySQL server. Currently does not support MySQL 
-# server configuration.
+# Class for installing and configuring MySQL server. Currently does not support 
+# MySQL server configuration.
 #
 # [*email*]
 #   Email address for notifications from monit. Defaults to top-scope variable 

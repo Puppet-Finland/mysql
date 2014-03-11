@@ -1,5 +1,6 @@
 #!/bin/sh
 
+MKTEMP_EXECUTABLE=<%= scope.lookupvar('mysql::params::mktemp_executable') %>
 MYSQL_USER=<%= mysql_user %>
 MYSQL_PASSWORD=<%= mysql_password %>
 MYSQL_EXECUTABLE=<%= scope.lookupvar('mysql::params::mysql_executable') %>
@@ -12,14 +13,19 @@ echoerr() {
 }
 
 query_slave_status() {
-    $MYSQL_EXECUTABLE -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --vertical -e "SHOW SLAVE STATUS"|grep "$1"|sed s/"^ *"//g
+    grep "$1" "$STATUSFILE"|sed s/"^ *"//g
 }
+
+# This approach works on Linux and FreeBSD
+STATUSFILE=`mktemp /tmp/tmp.XXXXXXXXXX`
+
+$MYSQL_EXECUTABLE -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --vertical -e "SHOW SLAVE STATUS" > "$STATUSFILE"
 
 SLAVE_IO_STATUS=$(query_slave_status "Slave_IO_Running")
 SLAVE_SQL_STATUS=$(query_slave_status "Slave_SQL_Running")
-LAST_ERRNO=$(query_slave_status "Last_Errno")
-LAST_ERROR=$(query_slave_status "Last_Error")
 SECONDS_BEHIND_MASTER=$(query_slave_status "Seconds_Behind_Master")
+
+rm -f "$STATUSFILE"
 
 if ! [ "$SLAVE_IO_STATUS" = "Slave_IO_Running: Yes" ]
 then
@@ -35,14 +41,6 @@ then
     retval=1
 fi
 
-if ! [ "$LAST_ERRNO" = "Last_Errno: 0" ]
-then
-    echoerr
-    echoerr $LAST_ERRNO
-    echoerr $LAST_ERROR
-    retval=1
-fi
-
 # Mysql slaves replication can lag behind even in normal circumstances, so we
 # don't need to panic if Seconds_Behind_Master is not 0.
 SECS=$(echo $SECONDS_BEHIND_MASTER|tr -d " "|cut -d ":" -f 2)
@@ -50,7 +48,7 @@ SECS=$(echo $SECONDS_BEHIND_MASTER|tr -d " "|cut -d ":" -f 2)
 if [ $SECS -ge $MAX_SECONDS_BEHIND_MASTER ]
 then
     echoerr
-    echoerr $SLAVE_SECONDS_BEHIND_MASTER
+    echoerr $SECONDS_BEHIND_MASTER
     retval=1
 fi
 
