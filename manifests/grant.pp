@@ -20,7 +20,8 @@
 #   The hostname or IP part of the user definition. Defaults to 'localhost'. For 
 #   discussion have a look at the mysql::user define.
 # [*database*]
-#   The database to grant privileges to.
+#   The database to grant privileges to. If no database is defined, assume '*' 
+#   (all databases).
 # [*privileges*]
 #   A comma-separated (string) list of privileges given to the user database. 
 #   For example 'STATUS', 'ALL' or 'SELECT,UPDATE'. Defaults to 'USAGE' (=no 
@@ -31,7 +32,7 @@ define mysql::grant
     $status = 'present',
     $user,
     $host = 'localhost',
-    $database,
+    $database = '*',
     $privileges = 'USAGE'
 )
 {
@@ -42,12 +43,12 @@ define mysql::grant
     if $status == 'present' {
         # See mysql::user for rationale on the backticks and backslashes.
         exec { "mysql-grant-${privileges}-for-${user}-to-${database}":
-            command => "${::mysql::params::mysql_executable} ${params} -e \"GRANT ${privileges} ON \\`${database}\\`.* TO '${user}'@'${host}';\"",
+            command => "${::mysql::params::mysql_executable} ${params} -e \"GRANT ${privileges} ON ${database}.* TO '${user}'@'${host}';\"",
             onlyif  => "${::mysql::params::mysql_executable} ${params} -e \"SHOW GRANTS FOR '${user}'@'${host}';\"",
         }
     } elsif $status == 'absent' {
         exec { "mysql-revoke-${privileges}-for-${user}-to-${database}":
-            command => "${::mysql::params::mysql_executable} ${params} -e \"REVOKE ${privileges} ON \\`${database}\\`.* FROM '${user}'@'${host}';\"",
+            command => "${::mysql::params::mysql_executable} ${params} -e \"REVOKE ${privileges} ON ${database}.* FROM '${user}'@'${host}';\"",
             onlyif  => "${::mysql::params::mysql_executable} ${params} -e \"SHOW GRANTS FOR '${user}'@'${host}';\"",
         }
     } else {
