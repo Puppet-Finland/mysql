@@ -41,9 +41,6 @@ define mysql::user
     $params = '--defaults-extra-file=/root/.my.cnf'
 
     if $status == 'present' {
-        # Note: Backtick notation needs to be escaped to prevent bach 
-        # interpreting it as command subtitution We need to escape the backslash 
-        # also, that's why there are double backslashes.
         exec { "mysql-create-user-${user_value}-at-${host}":
             command => "${::mysql::params::mysql_executable} ${params} -e \"GRANT USAGE ON *.* TO '${user_value}'@'${host}' IDENTIFIED BY '${password}';\"",
         }
