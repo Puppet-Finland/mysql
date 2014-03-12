@@ -1,14 +1,23 @@
 #
 # == Class: mysql::install
 #
-# Install MySQL server
+# Install MySQL or MariaDB server
 #
-class mysql::install {
-
+class mysql::install
+(
+    $use_mariadb_repo
+)
+{
     include mysql::params
+
+    $package_name = $use_mariadb_repo ? {
+        /(yes|stable|testing)/  => "${::mysql::params::mariadb_package_name}",
+        'no'                    => "${::mysql::params::mysql_package_name}",
+        default                 => "${::mysql::params::mysql_package_name}",
+    }
 
     package { 'mysql-server':
         ensure => installed,
-        name => "${::mysql::params::package_name}",
+        name => $package_name,
     }
 }

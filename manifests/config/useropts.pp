@@ -28,7 +28,7 @@ define mysql::config::useropts
     file { "${owner}-.my.cnf":
         name    => "${config_file}",
         ensure  => present,
-        content => template('mysql/my.cnf.erb'),
+        content => template('mysql/user-my.cnf.erb'),
         owner   => $owner,
         group   => $owner,
         mode    => 640,

@@ -10,8 +10,8 @@
 # == Parameters
 #
 # [*status*]
-#   Status of the user. Currently only supported value is 'present' (default). 
-#   Later on 'absent' can be added fairly easily.
+#   Status of the user. Valid values are 'present' and 'absent'. The default 
+#   value is 'present'.
 # [*user*]
 #   The MySQL username. If omitted, resource $title is used.
 # [*password*]:
@@ -42,12 +42,14 @@ define mysql::user
 
     if $status == 'present' {
         exec { "mysql-create-user-${user_value}-at-${host}":
-            command => "${::mysql::params::mysql_executable} ${params} -e \"GRANT USAGE ON *.* TO '${user_value}'@'${host}' IDENTIFIED BY '${password}';\"",
+            command => "${::mysql::params::client_executable} ${params} -e \"GRANT USAGE ON *.* TO '${user_value}'@'${host}' IDENTIFIED BY '${password}';\"",
+            require => Class['mysql::config::rootopts'],
         }
     } elsif $status == 'absent' {
         exec { "mysql-drop-user-${user_value}-at-${host}":
-            command => "${::mysql::params::mysql_executable} ${params} -e \"DROP USER '${user_value}'@'${host}';\"",
-            onlyif  => "${::mysql::params::mysql_executable} ${params} -e \"SHOW GRANTS FOR '${user_value}'@'${host}';\"",
+            command => "${::mysql::params::client_executable} ${params} -e \"DROP USER '${user_value}'@'${host}';\"",
+            onlyif  => "${::mysql::params::client_executable} ${params} -e \"SHOW GRANTS FOR '${user_value}'@'${host}';\"",
+            require => Class['mysql::config::rootopts'],
         }
     } else {
         notify { "Value of the \$status parameter (\"${status}\") for a mysql::user resource is invalid. Supported values are 'present' and 'absent'.":

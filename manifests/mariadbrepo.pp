@@ -1,0 +1,47 @@
+#
+# == Class: mysql::mariadbrepo
+#
+# Setup MariaDB apt repository. This class depends on the "puppetlabs/apt" 
+# puppet module:
+#
+# <https://forge.puppetlabs.com/puppetlabs/apt>
+#
+# Proxy support requires a fairly recent version of apt module - 1.4.0 is known 
+# to work.
+#
+class mysql::mariadbrepo
+(
+    $use_mariadb_repo,
+    $proxy_url
+)
+{
+
+    include mysql::params
+
+    if ($::osfamily == 'Debian') and ($use_mariadb_repo =~ /(yes|stable|testing)/) {
+
+        apt::key { 'mariadb-aptrepo':
+            key               => '1BB943DB',
+            key_server        => 'hkp://keyserver.ubuntu.com',
+            key_options       => $proxy_url ? {
+                'none'        => undef,
+                default       => "http-proxy=\"$proxy_url\"",
+            },
+        }
+ 
+        apt::source { 'mariadb-aptrepo':
+            location          => $use_mariadb_repo ? {
+                'yes'         => "${::mariadb::params::mariadb_stable_apt_repo_location}",
+                'stable'      => "${::mariadb::params::mariadb_stable_apt_repo_location}",
+                'testing'     => "${::mariadb::params::mariadb_testing_apt_repo_location}",
+                default       => "${::mariadb::params::mariadb_stable_apt_repo_location}",
+            },
+            release           => "${::lsbdistcodename}",
+            repos             => 'main',
+            required_packages => undef,
+            pin               => '502',
+            include_src       => true,
+            require => Apt::Key['mariadb-aptrepo'],
+        }
+    }
+}
