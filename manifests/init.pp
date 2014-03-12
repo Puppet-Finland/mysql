@@ -25,9 +25,9 @@
 # == Parameters
 #
 # [*use_mariadb_repo*]
-#   Use MariaDB's official software repositories. Valid values 'yes', 'stable',
-#   'testing', and 'no'. The default value, 'yes', and 'stable' install stable
-#   releases from MariaDB repos. Value 'testing' uses testing releases and 'no'
+#   Use MariaDB's official software repositories. Valid values 'yes', 'stable', 
+#   'testing', and 'no'. Values 'yes' and 'stable' install stable releases from 
+#   MariaDB repos. Value 'testing' uses testing releases and 'no' (the default) 
 #   uses whatever is available in the operating system's own repositories.
 # [*proxy_url*]
 #   The proxy URL used for fetching the MariaDB software repository public keys.
@@ -73,7 +73,7 @@
 #
 class mysql
 (
-    $use_mariadb_repo = 'yes',
+    $use_mariadb_repo = 'no',
     $proxy_url = 'none',
     $bind_address = '',
     $root_password = '',
