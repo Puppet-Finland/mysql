@@ -31,10 +31,10 @@ class mysql::mariadbrepo
  
         apt::source { 'mariadb-aptrepo':
             location          => $use_mariadb_repo ? {
-                'yes'         => "${::mariadb::params::mariadb_stable_apt_repo_location}",
-                'stable'      => "${::mariadb::params::mariadb_stable_apt_repo_location}",
-                'testing'     => "${::mariadb::params::mariadb_testing_apt_repo_location}",
-                default       => "${::mariadb::params::mariadb_stable_apt_repo_location}",
+                'yes'         => "${::mysql::params::mariadb_stable_apt_repo_location}",
+                'stable'      => "${::mysql::params::mariadb_stable_apt_repo_location}",
+                'testing'     => "${::mysql::params::mariadb_testing_apt_repo_location}",
+                default       => "${::mysql::params::mariadb_stable_apt_repo_location}",
             },
             release           => "${::lsbdistcodename}",
             repos             => 'main',
