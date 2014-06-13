@@ -46,12 +46,13 @@
 # [*root_password*]
 #   The MySQL root user's password. Leave empty to not manage it using Puppet. 
 # [*allow_addresses_ipv4*]
-#   A list of IPv4 address/network from which to allow connections. Use special 
-#   value ['any'] to allow access from any IPv4 address. Defaults to 
-#   ['127.0.0.1'].
+#   A list of IPv4 address/network from which to allow connections. Currently 
+#   only affects packet filtering rules. Use special value ['any'] to allow 
+#   access from any IPv4 address. Defaults to ['127.0.0.1'].
 # [*allow_addresses_ipv6*]
-#   IPv6 address/network from which to allow connections. Use special value 
-#   ['any'] to allow access from any IPv4 address. Defaults to ['::1'].
+#   IPv6 address/network from which to allow connections. Currently only affects 
+#   packet filtering rules. Use special value ['any'] to allow access from any 
+#   IPv4 address. Defaults to ['::1'].
 # [*email*]
 #   Email address for notifications from monit. Defaults to top-scope variable 
 #   $::servermonitor.
