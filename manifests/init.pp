@@ -100,7 +100,6 @@ if hiera('manage_mysql', 'true') != 'false' {
         use_mariadb_repo => $use_mariadb_repo,
     }
 
-
     if $manage_config == 'yes' {
         class { 'mysql::config':
             bind_address => $bind_address,
