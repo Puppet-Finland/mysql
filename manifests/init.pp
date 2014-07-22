@@ -24,6 +24,9 @@
 #
 # == Parameters
 #
+# [*manage_config*]
+#   Whether to manage the configuration of MySQL/MariaDB server. Valid values 
+#   'yes' (default) and 'no'.
 # [*use_mariadb_repo*]
 #   Use MariaDB's official software repositories. Valid values 'yes', 'stable', 
 #   'testing', and 'no'. Values 'yes' and 'stable' install stable releases from 
@@ -74,6 +77,7 @@
 #
 class mysql
 (
+    $manage_config = 'yes',
     $use_mariadb_repo = 'no',
     $proxy_url = 'none',
     $bind_address = '',
@@ -96,9 +100,12 @@ if hiera('manage_mysql', 'true') != 'false' {
         use_mariadb_repo => $use_mariadb_repo,
     }
 
-    class { 'mysql::config':
-        bind_address => $bind_address,
-        root_password => $root_password,
+
+    if $manage_config == 'yes' {
+        class { 'mysql::config':
+            bind_address => $bind_address,
+            root_password => $root_password,
+        }
     }
 
     include mysql::service
