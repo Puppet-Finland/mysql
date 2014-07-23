@@ -5,6 +5,26 @@
 # slaves. Refer to MySQL/MariaDB documentation for more information on the 
 # parameters.
 #
+# Note that this class does not setup a MySQL user for replication. This is 
+# primarily because authorization depends on username, password _and_ 
+# hostname/IP. If there are more than one slave, then there will be more than 
+# one user. Accommodating <n> users using this class directly would be very 
+# difficult. The replication user(s) can easily be created using Hiera 
+# create_resources function and mysql::user and mysql::grant defined resources 
+# like this:
+#
+# mysql_users:
+#     repl_slave:
+#         user: 'repl_slave'
+#         password: '<password>'
+#         host: 'slave.domain.com'
+#
+# mysql_grants:
+#     repl_slave:
+#         user: 'repl_slave'
+#         host: 'slave.domain.com'
+#         privileges: 'REPLICATION SLAVE'
+#
 # == Parameters
 #
 # [*server_id*]
