@@ -9,20 +9,15 @@
 # primarily because authorization depends on username, password _and_ 
 # hostname/IP. If there are more than one slave, then there will be more than 
 # one user. Accommodating <n> users using this class directly would be very 
-# difficult. The replication user(s) can easily be created using Hiera 
-# create_resources function and mysql::user and mysql::grant defined resources 
-# like this:
-#
-# mysql_users:
-#     repl_slave:
-#         user: 'repl_slave'
-#         password: '<password>'
-#         host: 'slave.domain.com'
+# difficult. The replication user(s) can easily be created in Hiera using the 
+# create_resources function and mysql::grant defined resource(s) like this:
 #
 # mysql_grants:
 #     repl_slave:
+#         status: 'present'
 #         user: 'repl_slave'
-#         host: 'slave.domain.com'
+#         password: '<password>'
+#         host: '<slave-ip>'
 #         privileges: 'REPLICATION SLAVE'
 #
 # == Parameters

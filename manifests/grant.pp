@@ -16,6 +16,8 @@
 #   'present'.
 # [*user*]
 #   The MySQL username to grant access for.
+# [*password*]:
+#   User's password. Defaults to '' (no password).
 # [*host*]
 #   The hostname or IP part of the user definition. Defaults to 'localhost'. For 
 #   discussion have a look at the mysql::user define.
@@ -31,6 +33,7 @@ define mysql::grant
 (
     $status = 'present',
     $user,
+    $password = '',
     $host = 'localhost',
     $database = '*',
     $privileges = 'USAGE'
@@ -43,13 +46,12 @@ define mysql::grant
     if $status == 'present' {
         # See mysql::user for rationale on the backticks and backslashes.
         exec { "mysql-grant-${privileges}-for-${user}-to-${database}":
-            command => "${::mysql::params::client_executable} ${params} -e \"GRANT ${privileges} ON ${database}.* TO '${user}'@'${host}';\"",
-            onlyif  => "${::mysql::params::client_executable} ${params} -e \"SHOW GRANTS FOR '${user}'@'${host}';\"",
+            command => "${::mysql::params::client_executable} ${params} -e \"GRANT ${privileges} ON ${database}.* TO '${user}'@'${host}' IDENTIFIED BY '${password}';\"",
             require => Class['mysql::config::rootopts'],
         }
     } elsif $status == 'absent' {
         exec { "mysql-revoke-${privileges}-for-${user}-to-${database}":
-            command => "${::mysql::params::client_executable} ${params} -e \"REVOKE ${privileges} ON ${database}.* FROM '${user}'@'${host}';\"",
+            command => "${::mysql::params::client_executable} ${params} -e \"DROP USER '${user}'@'${host}';\"",
             onlyif  => "${::mysql::params::client_executable} ${params} -e \"SHOW GRANTS FOR '${user}'@'${host}';\"",
             require => Class['mysql::config::rootopts'],
         }
