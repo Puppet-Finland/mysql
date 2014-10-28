@@ -42,17 +42,22 @@ define mysql::grant
     include mysql::params
 
     $params = '--defaults-extra-file=/root/.my.cnf'
+    $basecmd = "${::mysql::params::client_executable} ${params} -e"
+    $add_grant = "GRANT ${privileges} ON \`${database}\`.* TO '${user}'@'${host}'"
+    $show_grants = "SHOW GRANTS FOR '${user}'@'${host}'"
+    $grant_pattern = "GRANT ${privileges}.*'${user}'.*'${host}'"
 
     if $status == 'present' {
         # See mysql::user for rationale on the backticks and backslashes.
         exec { "mysql-grant-${privileges}-for-${user}-to-${database}":
-            command => "${::mysql::params::client_executable} ${params} -e \"GRANT ${privileges} ON ${database}.* TO '${user}'@'${host}' IDENTIFIED BY '${password}';\"",
+            command => "${basecmd} \"${add_grant} IDENTIFIED BY '${password}';\"",
+            unless => "${basecmd} \"${show_grants}\"|grep \"${grant_pattern}\"",
             require => Class['mysql::config::rootopts'],
         }
     } elsif $status == 'absent' {
         exec { "mysql-revoke-${privileges}-for-${user}-to-${database}":
-            command => "${::mysql::params::client_executable} ${params} -e \"DROP USER '${user}'@'${host}';\"",
-            onlyif  => "${::mysql::params::client_executable} ${params} -e \"SHOW GRANTS FOR '${user}'@'${host}';\"",
+            command => "${basecmd} \"DROP USER '${user}'@'${host}';\"",
+            onlyif  => "${basecmd} \"${show_grants}\"",
             require => Class['mysql::config::rootopts'],
         }
     } else {
