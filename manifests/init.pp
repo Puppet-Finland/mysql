@@ -59,6 +59,8 @@
 # [*email*]
 #   Email address for notifications from monit. Defaults to top-scope variable 
 #   $::servermonitor.
+# [*grants*]
+#   A hash of mysql::grant resources to realize.
 #
 # == Examples
 #
@@ -85,12 +87,16 @@ class mysql
     $root_password = '',
     $allow_addresses_ipv4 = ['127.0.0.1'],
     $allow_addresses_ipv6 = ['::1'],
-    $email = $::servermonitor
+    $email = $::servermonitor,
+    $grants = {}
 )
 {
 
 # Rationale for this is explained in init.pp of the sshd module
 if hiera('manage_mysql', 'true') != 'false' {
+
+    # Realize the defined GRANTs
+    create_resources('mysql::grant', $grants)
 
     class { 'mysql::mariadbrepo':
         use_mariadb_repo => $use_mariadb_repo,
