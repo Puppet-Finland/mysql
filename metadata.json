@@ -1,0 +1,13 @@
+{
+  "name": "puppetfinland-mysql",
+  "version": "0.5.0",
+  "author": "Puppet-Finland team",
+  "license": "BSD license",
+  "summary": "Setup mysql"
+  "source": "https://github.com/Puppet-Finland/mysql.git",
+  "project_page": "https://github.com/Puppet-Finland/mysql",
+  "dependencies": [
+    { "name": "puppetfinland/monit", "version_requirement": ">= 0.5.0" },
+    { "name": "puppetfinland/packetfilter", "version_requirement": ">= 0.5.0" },
+  ]
+}
