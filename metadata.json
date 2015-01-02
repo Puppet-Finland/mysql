@@ -3,7 +3,7 @@
   "version": "0.5.0",
   "author": "Puppet-Finland team",
   "license": "BSD license",
-  "summary": "Setup mysql"
+  "summary": "Setup mysql",
   "source": "https://github.com/Puppet-Finland/mysql.git",
   "project_page": "https://github.com/Puppet-Finland/mysql",
   "dependencies": [
