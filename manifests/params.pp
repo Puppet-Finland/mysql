@@ -52,23 +52,7 @@ class mysql::params {
             $fragment_dir = '/usr/local/etc/my.cnf.d'
         }
         default: {
-            $mysql_package_name = 'mysql-server'
-            $mariadb_package_name = 'mariadb-server'
-            $client_executable = '/usr/bin/mysql'
-            $mktemp_executable = '/bin/mktemp'
-            $service_name = 'mysql'
-            $service_start = "/usr/sbin/service $service_name start"
-            $service_stop = "/usr/sbin/service $service_name stop"
-            $pidfile = '/var/run/mysqld/mysqld.pid'
-            $fragment_dir = '/etc/mysql/conf.d'
-
-            if $::operatingsystem == 'Debian' {
-                $mariadb_stable_apt_repo_location = 'http://mirror.netinch.com/pub/mariadb/repo/5.5/debian'
-                $mariadb_testing_apt_repo_location = 'http://mirror.netinch.com/pub/mariadb/repo/10.0/debian'
-            } elsif $::operatingsystem == 'Ubuntu' {
-                $mariadb_stable_apt_repo_location = 'http://mirror.netinch.com/pub/mariadb/repo/5.5/ubuntu'
-                $mariadb_testing_apt_repo_location = 'http://mirror.netinch.com/pub/mariadb/repo/10.0/ubuntu'
-            }
+            fail("Unsupported operating system: ${::osfamily}/${::operatingsystem}")
         }
     }
 }
