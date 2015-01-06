@@ -49,13 +49,13 @@ define mysql::grant
 
     if $status == 'present' {
         # See mysql::user for rationale on the backticks and backslashes.
-        exec { "mysql-grant-${privileges}-for-${user}-to-${database}":
+        exec { "mysql-grant-${privileges}-for-${user}-to-${database}-from-${host}":
             command => "${basecmd} \"${add_grant} IDENTIFIED BY '${password}';\"",
             unless => "${basecmd} \"${show_grants}\"|grep \"${grant_pattern}\"",
             require => Class['mysql::config::rootopts'],
         }
     } elsif $status == 'absent' {
-        exec { "mysql-revoke-${privileges}-for-${user}-to-${database}":
+        exec { "mysql-revoke-${privileges}-for-${user}-to-${database}-from-${host}":
             command => "${basecmd} \"DROP USER '${user}'@'${host}';\"",
             onlyif  => "${basecmd} \"${show_grants}\"",
             require => Class['mysql::config::rootopts'],
