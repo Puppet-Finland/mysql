@@ -31,7 +31,8 @@ class mysql::params {
             $service_start = "/usr/sbin/service $service_name start"
             $service_stop = "/usr/sbin/service $service_name stop"
             $pidfile = '/var/run/mysqld/mysqld.pid'
-            $fragment_dir = '/etc/mysql/conf.d'
+            $config_dir = '/etc/mysql'
+            $fragment_dir = "${config_dir}/conf.d"
 
             if $::operatingsystem == 'Debian' {
                 $mariadb_stable_apt_repo_location = 'http://mirror.netinch.com/pub/mariadb/repo/5.5/debian'
@@ -49,7 +50,8 @@ class mysql::params {
             $service_start = "/usr/local/etc/$service_name start"
             $service_stop = "/usr/local/etc/$service_name stop"
             $pidfile = "/var/db/mysql/${::fqdn}.pid"
-            $fragment_dir = '/usr/local/etc/my.cnf.d'
+            $config_dir = '/usr/local/etc'
+            $fragment_dir = "${config_dir}/my.cnf.d"
         }
         default: {
             fail("Unsupported operating system: ${::osfamily}/${::operatingsystem}")

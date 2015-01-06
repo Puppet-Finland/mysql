@@ -47,7 +47,9 @@
 #   <https://dev.mysql.com/doc/refman/5.5/en/server-options.html>
 #
 # [*root_password*]
-#   The MySQL root user's password. Leave empty to not manage it using Puppet. 
+#   The MySQL root user's password. This affects /root/.my.cnf and, on Debian, 
+#   the actual root password set during _initial_ mysql/mariadb-server install. 
+#   Leave this empty to not manage the root password using Puppet.
 # [*allow_addresses_ipv4*]
 #   A list of IPv4 address/network from which to allow connections. Currently 
 #   only affects packet filtering rules. Use special value ['any'] to allow 
@@ -97,6 +99,10 @@ if hiera('manage_mysql', 'true') != 'false' {
 
     # Realize the defined GRANTs
     create_resources('mysql::grant', $grants)
+
+    class { 'mysql::prequisites':
+        root_password => $root_password,
+    }
 
     class { 'mysql::mariadbrepo':
         use_mariadb_repo => $use_mariadb_repo,

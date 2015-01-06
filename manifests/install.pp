@@ -19,5 +19,6 @@ class mysql::install
     package { 'mysql-server':
         ensure => installed,
         name => $package_name,
+        require => Class['mysql::prequisites'],
     }
 }
