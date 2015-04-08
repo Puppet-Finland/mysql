@@ -47,8 +47,8 @@ class mysql::params {
             $client_executable = '/usr/local/bin/mysql'
             $mktemp_executable = '/usr/bin/mktemp'
             $service_name = 'mysql-server'
-            $service_start = "/usr/local/etc/$service_name start"
-            $service_stop = "/usr/local/etc/$service_name stop"
+            $service_start = "/usr/local/etc/rc.d/$service_name start"
+            $service_stop = "/usr/local/etc/rc.d/$service_name stop"
             $pidfile = "/var/db/mysql/${::fqdn}.pid"
             $config_dir = '/usr/local/etc'
             $fragment_dir = "${config_dir}/my.cnf.d"
