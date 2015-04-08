@@ -24,6 +24,9 @@
 #
 # == Parameters
 #
+# [*manage*]
+#   Whether to manage MySQL/MariaDB using Puppet. Valid values are 'yes' 
+#   (default) and 'no'.
 # [*manage_config*]
 #   Whether to manage the configuration of MySQL/MariaDB server. Valid values 
 #   'yes' (default) and 'no'.
@@ -82,6 +85,7 @@
 #
 class mysql
 (
+    $manage = 'yes',
     $manage_config = 'yes',
     $use_mariadb_repo = 'no',
     $proxy_url = 'none',
@@ -94,8 +98,7 @@ class mysql
 )
 {
 
-# Rationale for this is explained in init.pp of the sshd module
-if hiera('manage_mysql', 'true') != 'false' {
+if $manage == 'yes' {
 
     # Realize the defined GRANTs
     create_resources('mysql::grant', $grants)
