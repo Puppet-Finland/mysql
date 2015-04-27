@@ -19,18 +19,18 @@ define mysql::config::useropts
     $dbuser,
     $password
 )
-{   
+{
     $config_file = $owner ? {
         'root'  => '/root/.my.cnf',
         default => "/home/${owner}/.my.cnf",
     }
 
     file { "${owner}-.my.cnf":
-        name    => "${config_file}",
         ensure  => present,
+        name    => $config_file,
         content => template('mysql/user-my.cnf.erb'),
         owner   => $owner,
         group   => $owner,
-        mode    => 640,
+        mode    => '0640',
     }
 }

@@ -28,30 +28,33 @@ class mysql::prequisites::debian
 (
     $root_password
 
-) inherits mysql::params {
+) inherits mysql::params
+{
 
-    include os::params
+    # Only try to configure debconf if the root password is set
+    if $root_password {
 
-    # As this module supports numerous distributions as well as package sources, 
-    # we can't be sure what version of mysql/mariadb will be available. Instead 
-    # of adding tons of conditional logic to params.pp we just add proper 
-    # answers into a file for all possible combinations.
-    file { 'mysql-debconf-selections':
-        name => "${::mysql::params::config_dir}/debconf-selections",
-        ensure => present,
-        content => template('mysql/debconf-selections.erb'),
-        owner => root,
-        group => "${::os::params::admingroup}",
-        mode => 600,
-        before => Class['mysql::install'],
-    }
+        # As this module supports numerous distributions as well as package sources,
+        # we can't be sure what version of mysql/mariadb will be available. Instead 
+        # of adding tons of conditional logic to params.pp we just add proper 
+        # answers into a file for all possible combinations.
+        file { 'mysql-debconf-selections':
+            ensure  => present,
+            name    => "${::mysql::params::config_dir}/debconf-selections",
+            content => template('mysql/debconf-selections.erb'),
+            owner   => $::os::params::adminuser,
+            group   => $::os::params::admingroup,
+            mode    => '0600',
+            before  => Class['mysql::install'],
+        }
 
-    exec { 'mysql-debconf-set-selections':
-        command => "debconf-set-selections ${::mysql::params::config_dir}/debconf-selections",
-        path => [ '/usr/bin' ],
-        user => root,
-        refreshonly => true,
-        subscribe => File['mysql-debconf-selections'],
-        before => Class['mysql::install'],
+        exec { 'mysql-debconf-set-selections':
+            command     => "debconf-set-selections ${::mysql::params::config_dir}/debconf-selections",
+            path        => [ '/usr/bin' ],
+            user        => root,
+            refreshonly => true,
+            subscribe   => File['mysql-debconf-selections'],
+            before      => Class['mysql::install'],
+        }
     }
 }

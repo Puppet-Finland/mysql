@@ -6,10 +6,9 @@
 class mysql::monit
 (
     $monitor_email
-)
-{
 
-    include mysql::params
+) inherits mysql::params
+{
 
     monit::fragment { 'mysql-mysql.monit':
         modulename => 'mysql',

@@ -11,13 +11,13 @@
 #
 # == Parameters
 #
-# [*status*]
-#   Status of the grant. Valid values 'present' and 'absent'. Defaults to 
-#   'present'.
 # [*user*]
 #   The MySQL username to grant access for.
+# [*ensure*]
+#   Status of the grant. Valid values 'present' and 'absent'. Defaults to 
+#   'present'.
 # [*password*]:
-#   User's password. Defaults to '' (no password).
+#   User's password. Defaults to undef (no password).
 # [*host*]
 #   The hostname or IP part of the user definition. Defaults to 'localhost'. For 
 #   discussion have a look at the mysql::user define.
@@ -31,15 +31,15 @@
 #
 define mysql::grant
 (
-    $status = 'present',
     $user,
-    $password = '',
+    $ensure = 'present',
+    $password = undef,
     $host = 'localhost',
     $database = '*',
     $privileges = 'USAGE'
 )
 {
-    include mysql::params
+    include ::mysql::params
 
     $params = '--defaults-extra-file=/root/.my.cnf'
     $basecmd = "${::mysql::params::client_executable} ${params} -e"
@@ -47,22 +47,22 @@ define mysql::grant
     $show_grants = "SHOW GRANTS FOR '${user}'@'${host}'"
     $grant_pattern = "GRANT ${privileges}.*'${user}'.*'${host}'"
 
-    if $status == 'present' {
+    if $ensure == 'present' {
         # See mysql::user for rationale on the backticks and backslashes.
         exec { "mysql-grant-${privileges}-for-${user}-to-${database}-from-${host}":
             command => "${basecmd} \"${add_grant} IDENTIFIED BY '${password}';\"",
-            unless => "${basecmd} \"${show_grants}\"|grep \"${grant_pattern}\"",
+            unless  => "${basecmd} \"${show_grants}\"|grep \"${grant_pattern}\"",
             require => Class['mysql::config::rootopts'],
         }
-    } elsif $status == 'absent' {
+    } elsif $ensure == 'absent' {
         exec { "mysql-revoke-${privileges}-for-${user}-to-${database}-from-${host}":
             command => "${basecmd} \"DROP USER '${user}'@'${host}';\"",
             onlyif  => "${basecmd} \"${show_grants}\"",
             require => Class['mysql::config::rootopts'],
         }
     } else {
-        notify { "Value of the \$status parameter (\"${status}\") in a mysql::grant resource is invalid. Supported values are 'present' and 'absent'.":
+        notify { "Value of the \$ensure parameter (\"${ensure}\") in a mysql::grant resource is invalid. Supported values are 'present' and 'absent'.":
             loglevel => warning,
         }
-    }    
+    }
 }

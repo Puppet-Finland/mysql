@@ -14,7 +14,7 @@
 #
 # mysql_grants:
 #     repl_slave:
-#         status: 'present'
+#         ensure: 'present'
 #         user: 'repl_slave'
 #         password: '<password>'
 #         host: '<slave-ip>'
@@ -53,18 +53,17 @@ class mysql::config::replication
     $log_slave_updates = 'OFF',
     $do_tables = [],
     $ignore_tables = []
-)
+
+) inherits mysql::params
 {
-    include os::params
-    include mysql::params
 
     file { 'mysql-replication.cnf':
-        name => "${::mysql::params::fragment_dir}/replication.cnf",
-        ensure => present,
+        ensure  => present,
+        name    => "${::mysql::params::fragment_dir}/replication.cnf",
         content => template('mysql/replication.cnf.erb'),
-        owner => root,
-        group => "${::os::params::admingroup}",
-        mode => 644,
+        owner   => $::os::params::adminuser,
+        group   => $::os::params::admingroup,
+        mode    => '0644',
         require => Class['mysql::config::fragmentdir'],
     }
 }

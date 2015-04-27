@@ -24,18 +24,17 @@ class mysql::config::innodb
 (
     $buffer_pool_size = 33554432,
     $file_per_table = 'ON'
-)
+
+) inherits mysql::params
 {
-    include os::params
-    include mysql::params
 
     file { 'mysql-innodb.cnf':
-        name => "${::mysql::params::fragment_dir}/innodb.cnf",
-        ensure => present,
+        ensure  => present,
+        name    => "${::mysql::params::fragment_dir}/innodb.cnf",
         content => template('mysql/innodb.cnf.erb'),
-        owner => root,
-        group => "${::os::params::admingroup}",
-        mode => 644,
+        owner   => $::os::params::adminuser,
+        group   => $::os::params::admingroup,
+        mode    => '0644',
         require => Class['mysql::config::fragmentdir'],
     }
 }

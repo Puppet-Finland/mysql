@@ -1,18 +1,22 @@
+#
+# == Class: mysql::config::bindaddress
+#
+# Configure the bind address for MySQL
+#
 class mysql::config::bindaddress
 (
     $bind_address
-)
+
+) inherits mysql::params
 {
-    include os::params
-    include mysql::params
 
     file { 'mysql-bindaddress.cnf':
-        name => "${::mysql::params::fragment_dir}/bindaddress.cnf",
-        ensure => present,
+        ensure  => present,
+        name    => "${::mysql::params::fragment_dir}/bindaddress.cnf",
         content => template('mysql/bindaddress.cnf.erb'),
-        owner => root,
-        group => "${::os::params::admingroup}",
-        mode => 644,
+        owner   => $::os::params::adminuser,
+        group   => $::os::params::admingroup,
+        mode    => '0644',
         require => Class['mysql::config::fragmentdir'],
     }
 }

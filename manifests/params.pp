@@ -5,6 +5,8 @@
 #
 class mysql::params {
 
+    include ::os::params
+
     case $::osfamily {
         'RedHat': {
             $mysql_package_name = 'mysql-server'
@@ -13,14 +15,6 @@ class mysql::params {
             $pidfile = '/var/run/mysqld/mysqld.pid'
             $service_name = 'mysqld'
             $fragment_dir = '/etc/my.cnf.d'
-
-            if $::operatingsystem == 'Fedora' {
-                $service_start = "/usr/bin/systemctl start ${service_name}.service"
-                $service_stop = "/usr/bin/systemctl stop ${service_name}.service"
-            } else {
-                $service_start = "/sbin/service $service_name start"
-                $service_stop = "/sbin/service $service_name stop"
-            }
         }
         'Debian': {
             $mysql_package_name = 'mysql-server'
@@ -28,8 +22,6 @@ class mysql::params {
             $client_executable = '/usr/bin/mysql'
             $mktemp_executable = '/bin/mktemp'
             $service_name = 'mysql'
-            $service_start = "/usr/sbin/service $service_name start"
-            $service_stop = "/usr/sbin/service $service_name stop"
             $pidfile = '/var/run/mysqld/mysqld.pid'
             $config_dir = '/etc/mysql'
             $fragment_dir = "${config_dir}/conf.d"
@@ -47,8 +39,6 @@ class mysql::params {
             $client_executable = '/usr/local/bin/mysql'
             $mktemp_executable = '/usr/bin/mktemp'
             $service_name = 'mysql-server'
-            $service_start = "/usr/local/etc/rc.d/$service_name start"
-            $service_stop = "/usr/local/etc/rc.d/$service_name stop"
             $pidfile = "/var/db/mysql/${::fqdn}.pid"
             $config_dir = '/usr/local/etc'
             $fragment_dir = "${config_dir}/my.cnf.d"
@@ -57,4 +47,7 @@ class mysql::params {
             fail("Unsupported operating system: ${::osfamily}/${::operatingsystem}")
         }
     }
+
+    $service_start = "${::os::params::service_cmd} ${service_name} start"
+    $service_stop = "${::os::params::service_cmd} ${service_name} stop"
 }

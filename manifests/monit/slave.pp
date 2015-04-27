@@ -24,26 +24,26 @@ class mysql::monit::slave
     $mysql_user,
     $mysql_password,
     $max_seconds_behind_master = '3600'
-)
+
+) inherits mysql::params
 {
 
-    include monit::params
-    include mysql::params
+    include ::monit::params
 
     # Monit fragment for handling mysql replication checks
     monit::fragment { 'mysql-mysql-replication.monit':
         modulename => 'mysql',
-        basename => 'mysql-replication',
+        basename   => 'mysql-replication',
     }
 
     # The actual script that checks if there are replication problems
     file { 'mysql-mysql-replication.sh':
-        ensure => present,
-        name => "${::monit::params::fragment_dir}/mysql-replication.sh",
+        ensure  => present,
+        name    => "${::monit::params::fragment_dir}/mysql-replication.sh",
         content => template('mysql/mysql-replication.sh.erb'),
-        owner => root,
-        group => root,
-        mode => 700,
+        owner   => $::os::params::adminuser,
+        group   => $::os::params::admingroup,
+        mode    => '0700',
         require => Class['monit::config'],
     }
 

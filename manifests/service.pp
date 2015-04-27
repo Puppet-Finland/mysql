@@ -3,13 +3,11 @@
 #
 # Configure MySQL to start on boot
 #
-class mysql::service {
-
-    include mysql::params
+class mysql::service inherits mysql::params {
 
     service { 'mysql-mysql':
-        enable => true,
-        name => "${::mysql::params::service_name}",
+        enable  => true,
+        name    => $::mysql::params::service_name,
         require => Class['mysql::install'],
     }
 }

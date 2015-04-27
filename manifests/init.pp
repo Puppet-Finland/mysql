@@ -44,8 +44,8 @@
 #   The address mysql server binds to. Use '0.0.0.0' to bind to all IPv4 
 #   interfaces, '::' to bind to all IPv4 and IPv6 interfaces and an IPv4 or IPv6 
 #   address to bind to that particular address. Alternatively use a hostname 
-#   instead of an IP-address. Leave empty to not manage the bind address using 
-#   Puppet (default). For further details, see
+#   instead of an IP-address. Leave undef(ined) to not manage the bind address 
+#   using Puppet (default). For further details, see
 #
 #   <https://dev.mysql.com/doc/refman/5.5/en/server-options.html>
 #
@@ -89,8 +89,8 @@ class mysql
     $manage_config = 'yes',
     $use_mariadb_repo = 'no',
     $proxy_url = 'none',
-    $bind_address = '',
-    $root_password = '',
+    $bind_address = undef,
+    $root_password = undef,
     $allow_addresses_ipv4 = ['127.0.0.1'],
     $allow_addresses_ipv6 = ['::1'],
     $email = $::servermonitor,
@@ -103,37 +103,37 @@ if $manage == 'yes' {
     # Realize the defined GRANTs
     create_resources('mysql::grant', $grants)
 
-    class { 'mysql::prequisites':
+    class { '::mysql::prequisites':
         root_password => $root_password,
     }
 
-    class { 'mysql::mariadbrepo':
+    class { '::mysql::mariadbrepo':
         use_mariadb_repo => $use_mariadb_repo,
-        proxy_url => $proxy_url,
+        proxy_url        => $proxy_url,
     }
 
-    class { 'mysql::install':
+    class { '::mysql::install':
         use_mariadb_repo => $use_mariadb_repo,
     }
 
     if $manage_config == 'yes' {
-        class { 'mysql::config':
-            bind_address => $bind_address,
+        class { '::mysql::config':
+            bind_address  => $bind_address,
             root_password => $root_password,
         }
     }
 
-    include mysql::service
+    include ::mysql::service
 
     if tagged('packetfilter') {
-        class { 'mysql::packetfilter':
+        class { '::mysql::packetfilter':
             allow_addresses_ipv4 => $allow_addresses_ipv4,
             allow_addresses_ipv6 => $allow_addresses_ipv6,
         }
     }
 
     if tagged('monit') {
-        class { 'mysql::monit':
+        class { '::mysql::monit':
             monitor_email => $email,
         }
     }

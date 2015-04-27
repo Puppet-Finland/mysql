@@ -13,35 +13,38 @@ class mysql::mariadbrepo
 (
     $use_mariadb_repo,
     $proxy_url
-)
-{
 
-    include mysql::params
+) inherits mysql::params
+{
 
     if ($::osfamily == 'Debian') and ($use_mariadb_repo =~ /(yes|stable|testing)/) {
 
-        apt::key { 'mariadb-aptrepo':
-            key               => '1BB943DB',
-            key_server        => 'hkp://keyserver.ubuntu.com',
-            key_options       => $proxy_url ? {
-                'none'        => undef,
-                default       => "http-proxy=\"$proxy_url\"",
-            },
+        $key_options = $proxy_url ? {
+            'none'  => undef,
+            default => "http-proxy=\"${proxy_url}\"",
         }
- 
+
+        apt::key { 'mariadb-aptrepo':
+            key         => '1BB943DB',
+            key_server  => 'hkp://keyserver.ubuntu.com',
+            key_options => $key_options,
+        }
+
+        $location = $use_mariadb_repo ? {
+            'yes'     => $::mysql::params::mariadb_stable_apt_repo_location,
+            'stable'  => $::mysql::params::mariadb_stable_apt_repo_location,
+            'testing' => $::mysql::params::mariadb_testing_apt_repo_location,
+            default   => $::mysql::params::mariadb_stable_apt_repo_location,
+        }
+
         apt::source { 'mariadb-aptrepo':
-            location          => $use_mariadb_repo ? {
-                'yes'         => "${::mysql::params::mariadb_stable_apt_repo_location}",
-                'stable'      => "${::mysql::params::mariadb_stable_apt_repo_location}",
-                'testing'     => "${::mysql::params::mariadb_testing_apt_repo_location}",
-                default       => "${::mysql::params::mariadb_stable_apt_repo_location}",
-            },
-            release           => "${::lsbdistcodename}",
+            location          => $location,
+            release           => $::lsbdistcodename,
             repos             => 'main',
             required_packages => undef,
             pin               => '502',
             include_src       => true,
-            require => Apt::Key['mariadb-aptrepo'],
+            require           => Apt::Key['mariadb-aptrepo'],
         }
     }
 }

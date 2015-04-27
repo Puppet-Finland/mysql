@@ -12,10 +12,10 @@ class mysql::config::rootopts
 (
     $password
 )
-{   
+{
     mysql::config::useropts { 'root-useropts':
-        owner => 'root',
-        dbuser => 'root',
-        password => "${password}",
+        owner    => 'root',
+        dbuser   => 'root',
+        password => $password,
     }
 }

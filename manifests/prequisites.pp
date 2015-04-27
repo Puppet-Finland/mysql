@@ -10,7 +10,7 @@ class mysql::prequisites
 ) inherits mysql::params
 {
     if $::osfamily == 'Debian' {
-        class { 'mysql::prequisites::debian':
+        class { '::mysql::prequisites::debian':
             root_password => $root_password,
         }
     }
