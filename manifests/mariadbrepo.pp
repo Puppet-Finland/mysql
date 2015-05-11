@@ -24,12 +24,6 @@ class mysql::mariadbrepo
             default => "http-proxy=\"${proxy_url}\"",
         }
 
-        apt::key { 'mariadb-aptrepo':
-            key         => '1BB943DB',
-            key_server  => 'hkp://keyserver.ubuntu.com',
-            key_options => $key_options,
-        }
-
         $location = $use_mariadb_repo ? {
             'yes'     => $::mysql::params::mariadb_stable_apt_repo_location,
             'stable'  => $::mysql::params::mariadb_stable_apt_repo_location,
@@ -38,13 +32,19 @@ class mysql::mariadbrepo
         }
 
         apt::source { 'mariadb-aptrepo':
-            location          => $location,
-            release           => $::lsbdistcodename,
-            repos             => 'main',
-            required_packages => undef,
-            pin               => '502',
-            include_src       => true,
-            require           => Apt::Key['mariadb-aptrepo'],
+            location => $location,
+            release  => $::lsbdistcodename,
+            repos    => 'main',
+            pin      => '502',
+            key      => {
+                'id'      => '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
+                'server'  => 'hkp://keyserver.ubuntu.com',
+                'options' => $key_options,
+            },
+            include  => {
+                'src' => true,
+                'deb' => true,
+            },
         }
     }
 }
