@@ -19,6 +19,8 @@ class mysql::mariadbrepo
 
     if ($::osfamily == 'Debian') and ($use_mariadb_repo =~ /(yes|stable|testing)/) {
 
+        include ::apt
+
         $key_options = $proxy_url ? {
             'none'  => undef,
             default => "http-proxy=\"${proxy_url}\"",
