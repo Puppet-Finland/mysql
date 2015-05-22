@@ -2,4 +2,4 @@
 #
 [client]
 user = <%= dbuser %>
-password = <%= password %>
+<% if @password %>password = <%= password %><% end -%>
