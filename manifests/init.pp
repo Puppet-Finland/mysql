@@ -70,6 +70,8 @@
 #   $::servermonitor.
 # [*grants*]
 #   A hash of mysql::grant resources to realize.
+# [*databases*]
+#   A hash of mysql::database resources to realize.
 #
 # == Examples
 #
@@ -99,7 +101,8 @@ class mysql
     $allow_addresses_ipv4 = ['127.0.0.1'],
     $allow_addresses_ipv6 = ['::1'],
     $email = $::servermonitor,
-    $grants = {}
+    $grants = {},
+    $databases = {}
 )
 {
 
@@ -126,8 +129,9 @@ if $manage == 'yes' {
         }
     }
 
-    # Realize the defined GRANTs
+    # Realize the defined GRANTs and databases
     create_resources('mysql::grant', $grants)
+    create_resources('mysql::database', $databases)
 
     include ::mysql::service
 
