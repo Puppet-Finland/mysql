@@ -50,6 +50,9 @@
 #
 #   <https://dev.mysql.com/doc/refman/5.5/en/server-options.html>
 #
+# [*manage_root_my_cnf*]
+#   Manage /root/.my.cnf using Puppet. Valid values are true (default) and 
+#   false.
 # [*root_password*]
 #   The MySQL root user's password. This affects /root/.my.cnf and, on Debian, 
 #   the actual root password set during _initial_ mysql/mariadb-server install. 
@@ -91,6 +94,7 @@ class mysql
     $use_mariadb_repo = 'no',
     $proxy_url = 'none',
     $bind_address = undef,
+    $manage_root_my_cnf = true,
     $root_password = undef,
     $allow_addresses_ipv4 = ['127.0.0.1'],
     $allow_addresses_ipv6 = ['::1'],
@@ -116,8 +120,9 @@ if $manage == 'yes' {
 
     if $manage_config == 'yes' {
         class { '::mysql::config':
-            bind_address  => $bind_address,
-            root_password => $root_password,
+            bind_address       => $bind_address,
+            manage_root_my_cnf => $manage_root_my_cnf,
+            root_password      => $root_password,
         }
     }
 

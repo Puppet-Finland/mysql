@@ -6,6 +6,7 @@
 class mysql::config
 (
     $bind_address,
+    $manage_root_my_cnf,
     $root_password
 
 ) inherits mysql::params
@@ -19,7 +20,7 @@ class mysql::config
         }
     }
 
-    if $root_password {
+    if $manage_root_my_cnf {
         class { '::mysql::config::rootopts':
             password => $root_password,
         }
