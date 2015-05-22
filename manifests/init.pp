@@ -34,7 +34,8 @@
 #   Use MariaDB's official software repositories. Valid values 'yes', 'stable', 
 #   'testing', and 'no'. Values 'yes' and 'stable' install stable releases from 
 #   MariaDB repos. Value 'testing' uses testing releases and 'no' (the default) 
-#   uses whatever is available in the operating system's own repositories.
+#   uses whatever is available in the operating system's own repositories. This 
+#   parameter is only supported on Debian-based operating systems.
 # [*proxy_url*]
 #   The proxy URL used for fetching the MariaDB software repository public keys.
 #   For example "http://proxy.domain.com:8888". Not needed if the node has
@@ -100,9 +101,6 @@ class mysql
 
 if $manage == 'yes' {
 
-    # Realize the defined GRANTs
-    create_resources('mysql::grant', $grants)
-
     class { '::mysql::prequisites':
         root_password => $root_password,
     }
@@ -122,6 +120,9 @@ if $manage == 'yes' {
             root_password => $root_password,
         }
     }
+
+    # Realize the defined GRANTs
+    create_resources('mysql::grant', $grants)
 
     include ::mysql::service
 

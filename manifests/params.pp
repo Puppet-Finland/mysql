@@ -9,11 +9,26 @@ class mysql::params {
 
     case $::osfamily {
         'RedHat': {
-            $mysql_package_name = 'mysql-server'
+
+            case $::operatingsystemmajrelease {
+                6: {
+                    $mysql_package_name = 'mysql-server'
+                    $service_name = 'mysqld'
+                    $pidfile = '/var/run/mysqld/mysqld.pid'
+                }
+                7: {
+                    $mysql_package_name = 'mariadb-server'
+                    $service_name = 'mariadb'
+                    $pidfile = '/var/run/mariadb/mariadb.pid'
+                }
+                default: {
+                    fail("Unsupported RedHat major release: ${::operatingsystemmajrelease}")
+                }
+            }
+
+            $mariadb_package_name = 'mariadb-server'
             $client_executable = '/usr/bin/mysql'
             $mktemp_executable = '/bin/mktemp'
-            $pidfile = '/var/run/mysqld/mysqld.pid'
-            $service_name = 'mysqld'
             $fragment_dir = '/etc/my.cnf.d'
         }
         'Debian': {
@@ -48,6 +63,11 @@ class mysql::params {
         }
     }
 
-    $service_start = "${::os::params::service_cmd} ${service_name} start"
-    $service_stop = "${::os::params::service_cmd} ${service_name} stop"
+    if str2bool($::has_systemd) {
+        $service_start = "${::os::params::systemctl} start ${service_name}"
+        $service_stop = "${::os::params::systemctl} stop ${service_name}"
+    } else {
+        $service_start = "${::os::params::service_cmd} ${service_name} start"
+        $service_stop = "${::os::params::service_cmd} ${service_name} stop"
+    }
 }

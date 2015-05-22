@@ -17,36 +17,40 @@ class mysql::mariadbrepo
 ) inherits mysql::params
 {
 
-    if ($::osfamily == 'Debian') and ($use_mariadb_repo =~ /(yes|stable|testing)/) {
+    if $use_mariadb_repo =~ /(yes|stable|testing)/ {
 
-        include ::apt
+        if $::osfamily == 'Debian' {
+            include ::apt
 
-        $key_options = $proxy_url ? {
-            'none'  => undef,
-            default => "http-proxy=\"${proxy_url}\"",
-        }
+            $key_options = $proxy_url ? {
+                'none'  => undef,
+                default => "http-proxy=\"${proxy_url}\"",
+            }
 
-        $location = $use_mariadb_repo ? {
-            'yes'     => $::mysql::params::mariadb_stable_apt_repo_location,
-            'stable'  => $::mysql::params::mariadb_stable_apt_repo_location,
-            'testing' => $::mysql::params::mariadb_testing_apt_repo_location,
-            default   => $::mysql::params::mariadb_stable_apt_repo_location,
-        }
+            $location = $use_mariadb_repo ? {
+                'yes'     => $::mysql::params::mariadb_stable_apt_repo_location,
+                'stable'  => $::mysql::params::mariadb_stable_apt_repo_location,
+                'testing' => $::mysql::params::mariadb_testing_apt_repo_location,
+                default   => $::mysql::params::mariadb_stable_apt_repo_location,
+            }
 
-        apt::source { 'mariadb-aptrepo':
-            location => $location,
-            release  => $::lsbdistcodename,
-            repos    => 'main',
-            pin      => '502',
-            key      => {
-                'id'      => '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
-                'server'  => 'hkp://keyserver.ubuntu.com',
-                'options' => $key_options,
-            },
-            include  => {
-                'src' => true,
-                'deb' => true,
-            },
+            apt::source { 'mariadb-aptrepo':
+                location => $location,
+                release  => $::lsbdistcodename,
+                repos    => 'main',
+                pin      => '502',
+                key      => {
+                    'id'      => '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
+                    'server'  => 'hkp://keyserver.ubuntu.com',
+                    'options' => $key_options,
+                },
+                include  => {
+                    'src' => true,
+                    'deb' => true,
+                },
+            }
+        } else {
+            fail("Invalid value ${use_mariadb_repo} for \$use_mariadb_repo parameter. MariaDB repositories not supported on ${::osfamily}.")
         }
     }
 }
