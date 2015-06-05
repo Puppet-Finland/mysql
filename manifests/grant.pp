@@ -41,11 +41,13 @@ define mysql::grant
 {
     include ::mysql::params
 
+    $db_quoted = $database ? { '*' => $database, default => "\`${database}\`" }
+    $db_quoted_regexp = $database ? { '*' => '[*]', default => ".${database}." }
     $params = '--defaults-extra-file=/root/.my.cnf'
     $basecmd = "${::mysql::params::client_executable} ${params} -e"
-    $add_grant = "GRANT ${privileges} ON \`${database}\`.* TO '${user}'@'${host}'"
+    $add_grant = "GRANT ${privileges} ON ${db_quoted}.* TO '${user}'@'${host}'"
     $show_grants = "SHOW GRANTS FOR '${user}'@'${host}'"
-    $grant_pattern = "GRANT ${privileges}.*'${user}'.*'${host}'"
+    $grant_pattern = "GRANT ${privileges}.*ON.${db_quoted_regexp}\.[*].TO.'${user}'@'${host}'"
 
     if $ensure == 'present' {
         # See mysql::user for rationale on the backticks and backslashes.
