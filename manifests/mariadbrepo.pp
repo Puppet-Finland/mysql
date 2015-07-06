@@ -34,20 +34,22 @@ class mysql::mariadbrepo
                 default   => $::mysql::params::mariadb_stable_apt_repo_location,
             }
 
+            apt::key { 'mariadb-aptrepo':
+                id      => '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
+                server  => 'hkp://keyserver.ubuntu.com',
+                options => $key_options,
+            }
+
             apt::source { 'mariadb-aptrepo':
                 location => $location,
                 release  => $::lsbdistcodename,
                 repos    => 'main',
                 pin      => '502',
-                key      => {
-                    'id'      => '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
-                    'server'  => 'hkp://keyserver.ubuntu.com',
-                    'options' => $key_options,
-                },
                 include  => {
                     'src' => true,
                     'deb' => true,
                 },
+                require  => Apt::Key['mariadb-aptrepo'],
             }
         } else {
             fail("Invalid value ${use_mariadb_repo} for \$use_mariadb_repo parameter. MariaDB repositories not supported on ${::osfamily}.")
