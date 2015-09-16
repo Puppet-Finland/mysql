@@ -1,10 +1,10 @@
 #!/bin/sh
 
 MKTEMP_EXECUTABLE=<%= scope.lookupvar('mysql::params::mktemp_executable') %>
-MYSQL_USER=<%= mysql_user %>
-MYSQL_PASSWORD=<%= mysql_password %>
+MYSQL_USER=<%= @mysql_user %>
+MYSQL_PASSWORD=<%= @mysql_password %>
 MYSQL_EXECUTABLE=<%= scope.lookupvar('mysql::params::client_executable') %>
-MAX_SECONDS_BEHIND_MASTER=<%= max_seconds_behind_master %>
+MAX_SECONDS_BEHIND_MASTER=<%= @max_seconds_behind_master %>
 
 retval=0
 

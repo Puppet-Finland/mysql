@@ -1,6 +1,6 @@
 {
   "name": "puppetfinland-mysql",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "author": "Puppet-Finland team",
   "license": "BSD license",
   "summary": "Setup mysql",
