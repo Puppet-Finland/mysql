@@ -11,12 +11,12 @@ class mysql::params {
         'RedHat': {
 
             case $::operatingsystemmajrelease {
-                6: {
+                '6': {
                     $mysql_package_name = 'mysql-server'
                     $service_name = 'mysqld'
                     $pidfile = '/var/run/mysqld/mysqld.pid'
                 }
-                7: {
+                '7': {
                     $mysql_package_name = 'mariadb-server'
                     $service_name = 'mariadb'
                     $pidfile = '/var/run/mariadb/mariadb.pid'
