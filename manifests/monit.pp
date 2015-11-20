@@ -11,6 +11,7 @@ class mysql::monit
 {
 
     monit::fragment { 'mysql-mysql.monit':
+        basename   => 'mysql',
         modulename => 'mysql',
     }
 }
