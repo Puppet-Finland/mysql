@@ -31,6 +31,11 @@ class mysql::prequisites::debian
 ) inherits mysql::params
 {
 
+    # We need this directory or the rest of this class is doomed
+    file { $::mysql::params::config_dir:
+        ensure => directory,
+    }
+
     # Only try to configure debconf if the root password is set
     if $root_password {
 
@@ -46,6 +51,7 @@ class mysql::prequisites::debian
             group   => $::os::params::admingroup,
             mode    => '0600',
             before  => Class['mysql::install'],
+            require => File['/etc/mysql'],
         }
 
         exec { 'mysql-debconf-set-selections':
