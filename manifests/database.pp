@@ -14,23 +14,23 @@
 # [*mysql_passwd*]
 #   Password for the above user.
 # [*use_root_defaults*]
-#   Defines whether to load /root/.my.cnf or not. It is assumed that it contains 
-#   MySQL credentials for the root user. Valid values are 'yes' and 'no' 
+#   Defines whether to load /root/.my.cnf or not. It is assumed that it contains
+#   MySQL credentials for the root user. Valid values are true and false
 #   (default).
 #
 define mysql::database
 (
-    $ensure = 'present',
-    $mysql_user = 'root',
-    $mysql_passwd = undef,
-    $use_root_defaults = 'no'
+    Enum['present', 'absent'] $ensure = 'present',
+    String                    $mysql_user = 'root',
+    Optional[String]          $mysql_passwd = undef,
+    Boolean                   $use_root_defaults = false
 )
 {
 
     # Get the database name from the $title
     $database = $title
 
-    if $use_root_defaults == 'yes' {
+    if $use_root_defaults {
         $basecmd = "${::mysql::params::client_executable} --defaults-extra-file=/root/.my.cnf -e"
     } else {
         if $mysql_passwd {
