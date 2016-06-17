@@ -11,8 +11,8 @@
 #
 class mysql::mariadbrepo
 (
-    $use_mariadb_repo,
-    $proxy_url
+    Enum['yes', 'stable', 'testing', 'no'] $use_mariadb_repo,
+    String                                 $proxy_url
 
 ) inherits mysql::params
 {

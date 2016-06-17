@@ -5,7 +5,7 @@
 #
 class mysql::config::bindaddress
 (
-    $bind_address
+    String $bind_address
 
 ) inherits mysql::params
 {

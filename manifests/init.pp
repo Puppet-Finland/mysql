@@ -25,11 +25,10 @@
 # == Parameters
 #
 # [*manage*]
-#   Whether to manage MySQL/MariaDB using Puppet. Valid values are 'yes' 
-#   (default) and 'no'.
+#   Whether to manage MySQL/MariaDB using Puppet. Boolean, defaults to true.
 # [*manage_config*]
-#   Whether to manage the configuration of MySQL/MariaDB server. Valid values 
-#   'yes' (default) and 'no'.
+#   Whether to manage the configuration of MySQL/MariaDB server. Boolean, 
+#   defaults to true.
 # [*use_mariadb_repo*]
 #   Use MariaDB's official software repositories. Valid values 'yes', 'stable', 
 #   'testing', and 'no'. Values 'yes' and 'stable' install stable releases from 
@@ -91,22 +90,22 @@
 #
 class mysql
 (
-    $manage = 'yes',
-    $manage_config = 'yes',
-    $use_mariadb_repo = 'no',
-    $proxy_url = 'none',
-    $bind_address = undef,
-    $manage_root_my_cnf = true,
-    $root_password = undef,
-    $allow_addresses_ipv4 = ['127.0.0.1'],
-    $allow_addresses_ipv6 = ['::1'],
-    $email = $::servermonitor,
-    $grants = {},
-    $databases = {}
+    Boolean $manage = true,
+    Boolean $manage_config = true,
+            $use_mariadb_repo = 'no',
+            $proxy_url = 'none',
+            $bind_address = undef,
+            $manage_root_my_cnf = true,
+            $root_password = undef,
+            $allow_addresses_ipv4 = ['127.0.0.1'],
+            $allow_addresses_ipv6 = ['::1'],
+            $email = $::servermonitor,
+    Hash    $grants = {},
+    Hash    $databases = {}
 )
 {
 
-if $manage == 'yes' {
+if $manage {
 
     class { '::mysql::prequisites':
         root_password => $root_password,
@@ -121,7 +120,7 @@ if $manage == 'yes' {
         use_mariadb_repo => $use_mariadb_repo,
     }
 
-    if $manage_config == 'yes' {
+    if $manage_config {
         class { '::mysql::config':
             bind_address       => $bind_address,
             manage_root_my_cnf => $manage_root_my_cnf,

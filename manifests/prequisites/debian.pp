@@ -26,7 +26,7 @@
 #
 class mysql::prequisites::debian
 (
-    $root_password
+    Optional[String] $root_password
 
 ) inherits mysql::params
 {

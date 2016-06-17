@@ -5,9 +5,9 @@
 #
 class mysql::config
 (
-    $bind_address,
-    $manage_root_my_cnf,
-    $root_password
+    Optional[String] $bind_address,
+    Boolean          $manage_root_my_cnf,
+    Optional[String] $root_password
 
 ) inherits mysql::params
 {

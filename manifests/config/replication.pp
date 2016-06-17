@@ -47,12 +47,12 @@
 #
 class mysql::config::replication
 (
-    $server_id,
-    $expire_logs_days = 0,
-    $max_binlog_size = '100M',
-    $log_slave_updates = 'OFF',
-    $do_tables = [],
-    $ignore_tables = []
+    Integer                 $server_id,
+    Integer                 $expire_logs_days = 0,
+    Variant[String,Integer] $max_binlog_size = '100M',
+    Enum['ON', 'OFF']       $log_slave_updates = 'OFF',
+    Array[String]           $do_tables = [],
+    Array[String]           $ignore_tables = []
 
 ) inherits mysql::params
 {

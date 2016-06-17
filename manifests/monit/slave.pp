@@ -20,10 +20,10 @@
 #
 class mysql::monit::slave
 (
-    $monitor_email = $::servermonitor,
-    $mysql_user,
-    $mysql_password,
-    $max_seconds_behind_master = '3600'
+    String                   $monitor_email = $::servermonitor,
+    String                   $mysql_user,
+    String                   $mysql_password,
+    Variant[String, Integer] $max_seconds_behind_master = '3600'
 
 ) inherits mysql::params
 {

@@ -5,7 +5,7 @@
 #
 class mysql::monit
 (
-    $monitor_email
+    String $monitor_email
 
 ) inherits mysql::params
 {

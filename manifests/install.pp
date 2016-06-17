@@ -5,7 +5,7 @@
 #
 class mysql::install
 (
-    $use_mariadb_repo
+    String $use_mariadb_repo
 
 ) inherits mysql::params
 {

@@ -5,8 +5,8 @@
 #
 class mysql::packetfilter
 (
-    $allow_addresses_ipv4,
-    $allow_addresses_ipv6
+    Array[String] $allow_addresses_ipv4,
+    Array[String] $allow_addresses_ipv6
 )
 {
     mysql::packetfilter::allow_ipv4 { $allow_addresses_ipv4: }

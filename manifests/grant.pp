@@ -31,12 +31,12 @@
 #
 define mysql::grant
 (
-    $user,
-    $ensure = 'present',
-    $password = undef,
-    $host = 'localhost',
-    $database = '*',
-    $privileges = 'USAGE'
+    String                   $user,
+    Enum['present','absent'] $ensure = 'present',
+    Optional[String]         $password = undef,
+    String                   $host = 'localhost',
+    String                   $database = '*',
+    String                   $privileges = 'USAGE'
 )
 {
     include ::mysql::params
