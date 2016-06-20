@@ -49,6 +49,13 @@
 #
 #   <https://dev.mysql.com/doc/refman/5.5/en/server-options.html>
 #
+# [*sql_mode*]
+#   The SQL mode to use. By default this is not managed (set to undef). To
+#   disable strict modes set this to an empty string (''). Full documentation is
+#   available here:
+#
+#   <https://dev.mysql.com/doc/refman/5.5/en/sql-mode.html>
+#
 # [*manage_root_my_cnf*]
 #   Manage /root/.my.cnf using Puppet. Valid values are true (default) and 
 #   false.
@@ -95,6 +102,7 @@ class mysql
             $use_mariadb_repo = 'no',
             $proxy_url = 'none',
             $bind_address = undef,
+            $sql_mode = undef,
             $manage_root_my_cnf = true,
             $root_password = undef,
             $allow_addresses_ipv4 = ['127.0.0.1'],
@@ -123,6 +131,7 @@ if $manage {
     if $manage_config {
         class { '::mysql::config':
             bind_address       => $bind_address,
+            sql_mode           => $sql_mode,
             manage_root_my_cnf => $manage_root_my_cnf,
             root_password      => $root_password,
         }
