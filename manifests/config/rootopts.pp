@@ -10,7 +10,7 @@
 #
 class mysql::config::rootopts
 (
-    String $password
+    $password
 )
 {
     mysql::config::useropts { 'root-useropts':

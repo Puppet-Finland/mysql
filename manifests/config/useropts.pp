@@ -15,9 +15,9 @@
 #
 define mysql::config::useropts
 (
-    String $owner,
-    String $dbuser,
-    String $password
+    String           $owner,
+    String           $dbuser,
+    Optional[String] $password
 )
 {
     $config_file = $owner ? {
