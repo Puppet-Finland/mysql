@@ -5,6 +5,9 @@
 #
 # == Parameters
 #
+# [*ensure*]
+#   The status of mysql slave monitoring. Valid values are 'present' (default) 
+#   and 'absent'.
 # [*monitor_email*]
 #   Where to send email reports of replication problems. Defaults to global 
 #   variable $::servermonitor.
@@ -20,6 +23,7 @@
 #
 class mysql::monit::slave
 (
+    Enum['present','absent'] $ensure = 'present',
     String                   $monitor_email = $::servermonitor,
     String                   $mysql_user,
     String                   $mysql_password,
@@ -32,13 +36,14 @@ class mysql::monit::slave
 
     # Monit fragment for handling mysql replication checks
     monit::fragment { 'mysql-mysql-replication.monit':
+        ensure     => $ensure,
         modulename => 'mysql',
         basename   => 'mysql-replication',
     }
 
     # The actual script that checks if there are replication problems
     file { 'mysql-mysql-replication.sh':
-        ensure  => present,
+        ensure  => $ensure,
         name    => "${::monit::params::fragment_dir}/mysql-replication.sh",
         content => template('mysql/mysql-replication.sh.erb'),
         owner   => $::os::params::adminuser,
