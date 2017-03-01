@@ -13,7 +13,7 @@ define mysql::packetfilter::allow_ipv4 {
         default => $title,
     }
 
-    firewall { "009 ipv4 accept mysql from ${title}":
+    @firewall { "009 ipv4 accept mysql from ${title}":
         provider => 'iptables',
         chain    => 'INPUT',
         proto    => 'tcp',
@@ -22,5 +22,6 @@ define mysql::packetfilter::allow_ipv4 {
         source   => $source_v4,
         dport    => 3306,
         action   => 'accept',
+        tag      => 'default',
     }
 }

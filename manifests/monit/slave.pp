@@ -35,14 +35,15 @@ class mysql::monit::slave
     include ::monit::params
 
     # Monit fragment for handling mysql replication checks
-    monit::fragment { 'mysql-mysql-replication.monit':
+    @monit::fragment { 'mysql-mysql-replication.monit':
         ensure     => $ensure,
         modulename => 'mysql',
         basename   => 'mysql-replication',
+        tag        => 'default',
     }
 
     # The actual script that checks if there are replication problems
-    file { 'mysql-mysql-replication.sh':
+    @file { 'mysql-mysql-replication.sh':
         ensure  => $ensure,
         name    => "${::monit::params::fragment_dir}/mysql-replication.sh",
         content => template('mysql/mysql-replication.sh.erb'),
@@ -50,6 +51,7 @@ class mysql::monit::slave
         group   => $::os::params::admingroup,
         mode    => '0700',
         require => Class['monit::config'],
+        tag     => 'monit',
     }
 
 }

@@ -10,8 +10,9 @@ class mysql::monit
 ) inherits mysql::params
 {
 
-    monit::fragment { 'mysql-mysql.monit':
+    @monit::fragment { 'mysql-mysql.monit':
         basename   => 'mysql',
         modulename => 'mysql',
+        tag        => 'default',
     }
 }

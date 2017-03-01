@@ -11,7 +11,7 @@ define mysql::packetfilter::allow_ipv6 {
             default => $title,
     }
 
-    firewall { "009 ipv6 accept mysql from ${title}":
+    @firewall { "009 ipv6 accept mysql from ${title}":
         provider => 'ip6tables',
         chain    => 'INPUT',
         proto    => 'tcp',
@@ -20,5 +20,6 @@ define mysql::packetfilter::allow_ipv6 {
         source   => $source_v6,
         dport    => 3306,
         action   => 'accept',
+        tag      => 'default',
     }
 }

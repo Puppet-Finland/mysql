@@ -25,10 +25,15 @@
 # == Parameters
 #
 # [*manage*]
-#   Whether to manage MySQL/MariaDB using Puppet. Boolean, defaults to true.
+#   Whether to manage MySQL/MariaDB using Puppet. Valid values are true 
+#   (default) and false.
 # [*manage_config*]
-#   Whether to manage the configuration of MySQL/MariaDB server. Boolean, 
-#   defaults to true.
+#   Whether to manage the configuration of MySQL/MariaDB server. Valid values 
+#   are true (default) and false.
+# [*manage_packetfilter*]
+#   Manage packet filtering rules. Valid values are true (default) and false.
+# [*manage_monit*]
+#   Manage monit rules. Valid values are true (default) and false.
 # [*use_mariadb_repo*]
 #   Use MariaDB's official software repositories. Valid values 'yes', 'stable', 
 #   'testing', and 'no'. Values 'yes' and 'stable' install stable releases from 
@@ -99,6 +104,8 @@ class mysql
 (
     Boolean $manage = true,
     Boolean $manage_config = true,
+    Boolean $manage_packetfilter = true,
+    Boolean $manage_monit = true,
             $use_mariadb_repo = 'no',
             $proxy_url = 'none',
             $bind_address = undef,
@@ -143,14 +150,14 @@ if $manage {
 
     include ::mysql::service
 
-    if tagged('packetfilter') {
+    if $manage_packetfilter {
         class { '::mysql::packetfilter':
             allow_addresses_ipv4 => $allow_addresses_ipv4,
             allow_addresses_ipv6 => $allow_addresses_ipv6,
         }
     }
 
-    if tagged('monit') {
+    if $manage_monit {
         class { '::mysql::monit':
             monitor_email => $email,
         }
