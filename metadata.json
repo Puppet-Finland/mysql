@@ -41,6 +41,9 @@
       ]
     },
     {
+      "operatingsystem": "FreeBSD"
+    },
+    {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
         "6",
