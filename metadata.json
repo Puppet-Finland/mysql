@@ -2,7 +2,7 @@
   "name": "puppetfinland-mysql",
   "version": "3.0.0",
   "author": "Puppet-Finland team",
-  "license": "BSD license",
+  "license": "BSD-2-Clause",
   "summary": "Setup mysql",
   "source": "https://github.com/Puppet-Finland/mysql.git",
   "project_page": "https://github.com/Puppet-Finland/mysql",
