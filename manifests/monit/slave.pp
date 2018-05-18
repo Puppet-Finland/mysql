@@ -23,10 +23,10 @@
 #
 class mysql::monit::slave
 (
-    Enum['present','absent'] $ensure = 'present',
-    String                   $monitor_email = $::servermonitor,
     String                   $mysql_user,
     String                   $mysql_password,
+    Enum['present','absent'] $ensure = 'present',
+    String                   $monitor_email = $::servermonitor,
     Variant[String, Integer] $max_seconds_behind_master = '3600'
 
 ) inherits mysql::params
