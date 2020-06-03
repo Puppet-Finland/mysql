@@ -1,5 +1,5 @@
 #
-# == Class: mysql::monit::slave
+# == Class: pf_mysql::monit::slave
 #
 # Verify that mysql slave is replicating properly
 #
@@ -21,7 +21,7 @@
 #   This value can be surprisingly large even in "normal" circumstances, so the 
 #   default value is set to '3600'.
 #
-class mysql::monit::slave
+class pf_mysql::monit::slave
 (
     String                   $mysql_user,
     String                   $mysql_password,
@@ -29,29 +29,28 @@ class mysql::monit::slave
     String                   $monitor_email = $::servermonitor,
     Variant[String, Integer] $max_seconds_behind_master = '3600'
 
-) inherits mysql::params
+) inherits pf_mysql::params
 {
 
     include ::monit::params
 
-    # Monit fragment for handling mysql replication checks
-    @monit::fragment { 'mysql-mysql-replication.monit':
+    # Monit fragment for handling pf_mysql replication checks
+    @monit::fragment { 'pf_mysql-pf_mysql-replication.monit':
         ensure     => $ensure,
-        modulename => 'mysql',
+        modulename => 'pf_mysql',
         basename   => 'mysql-replication',
         tag        => 'default',
     }
 
     # The actual script that checks if there are replication problems
-    @file { 'mysql-mysql-replication.sh':
+    @file { 'pf_mysql-pf_mysql-replication.sh':
         ensure  => $ensure,
         name    => "${::monit::params::fragment_dir}/mysql-replication.sh",
-        content => template('mysql/mysql-replication.sh.erb'),
+        content => template('pf_mysql/mysql-replication.sh.erb'),
         owner   => $::os::params::adminuser,
         group   => $::os::params::admingroup,
         mode    => '0700',
         require => Class['monit::config'],
         tag     => 'monit',
     }
-
 }

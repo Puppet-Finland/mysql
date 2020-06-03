@@ -1,6 +1,6 @@
 ### THIS FILE IS MANAGED BY PUPPET. ANY MANUAL CHANGES WILL GET OVERWRITTEN.
 #
-check process mysql with pidfile <%= scope.lookupvar('mysql::params::pidfile') %>
-   start program "<%= scope.lookupvar('mysql::params::service_start') %>"
-   stop program "<%= scope.lookupvar('mysql::params::service_stop') %>"
-   alert <%= scope.lookupvar('mysql::monit::monitor_email') %> with reminder on 480 cycles
+check process mysql with pidfile <%= scope.lookupvar('pf_mysql::params::pidfile') %>
+   start program "<%= scope.lookupvar('pf_mysql::params::service_start') %>"
+   stop program "<%= scope.lookupvar('pf_mysql::params::service_stop') %>"
+   alert <%= scope.lookupvar('pf_mysql::monit::monitor_email') %> with reminder on 480 cycles

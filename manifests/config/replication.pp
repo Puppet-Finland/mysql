@@ -1,5 +1,5 @@
 #
-# == Class: mysql::config::replication
+# == Class: pf_mysql::config::replication
 #
 # Configure MySQL master-slave replication. Works equally well for masters and 
 # slaves. Refer to MySQL/MariaDB documentation for more information on the 
@@ -10,9 +10,9 @@
 # hostname/IP. If there are more than one slave, then there will be more than 
 # one user. Accommodating <n> users using this class directly would be very 
 # difficult. The replication user(s) can easily be created in Hiera using the 
-# create_resources function and mysql::grant defined resource(s) like this:
+# create_resources function and pf_mysql::grant defined resource(s) like this:
 #
-# mysql_grants:
+# pf_mysql_grants:
 #     repl_slave:
 #         ensure: 'present'
 #         user: 'repl_slave'
@@ -45,7 +45,7 @@
 #
 #   <https://dev.mysql.com/doc/refman/5.5/en/replication-rules-table-options.html>
 #
-class mysql::config::replication
+class pf_mysql::config::replication
 (
     Integer                 $server_id,
     Integer                 $expire_logs_days = 0,
@@ -54,16 +54,16 @@ class mysql::config::replication
     Array[String]           $do_tables = [],
     Array[String]           $ignore_tables = []
 
-) inherits mysql::params
+) inherits pf_mysql::params
 {
 
-    file { 'mysql-replication.cnf':
+    file { 'pf_mysql-replication.cnf':
         ensure  => present,
-        name    => "${::mysql::params::fragment_dir}/replication.cnf",
-        content => template('mysql/replication.cnf.erb'),
+        name    => "${::pf_mysql::params::fragment_dir}/replication.cnf",
+        content => template('pf_mysql/replication.cnf.erb'),
         owner   => $::os::params::adminuser,
         group   => $::os::params::admingroup,
         mode    => '0644',
-        require => Class['mysql::config::fragmentdir'],
+        require => Class['pf_mysql::config::fragmentdir'],
     }
 }

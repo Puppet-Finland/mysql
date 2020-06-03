@@ -1,5 +1,5 @@
 #
-# == Class: mysql::prequisites::debian
+# == Class: pf_mysql::prequisites::debian
 #
 # Do things that need to be done before anything else on Debian-based operating 
 # systems. This class is currently only needed to feed the debconf system the 
@@ -24,15 +24,15 @@
 # (in theory) be added directly. However, it's safest to let 
 # debconf-set-selections handle the logic to prevent unintended breakages.
 #
-class mysql::prequisites::debian
+class pf_mysql::prequisites::debian
 (
     Optional[String] $root_password
 
-) inherits mysql::params
+) inherits pf_mysql::params
 {
 
     # We need this directory or the rest of this class is doomed
-    file { $::mysql::params::config_dir:
+    file { $::pf_mysql::params::config_dir:
         ensure => directory,
     }
 
@@ -43,24 +43,24 @@ class mysql::prequisites::debian
         # we can't be sure what version of mysql/mariadb will be available. Instead 
         # of adding tons of conditional logic to params.pp we just add proper 
         # answers into a file for all possible combinations.
-        file { 'mysql-debconf-selections':
+        file { 'pf_mysql-debconf-selections':
             ensure  => present,
-            name    => "${::mysql::params::config_dir}/debconf-selections",
-            content => template('mysql/debconf-selections.erb'),
+            name    => "${::pf_mysql::params::config_dir}/debconf-selections",
+            content => template('pf_mysql/debconf-selections.erb'),
             owner   => $::os::params::adminuser,
             group   => $::os::params::admingroup,
             mode    => '0600',
-            before  => Class['mysql::install'],
+            before  => Class['pf_mysql::install'],
             require => File['/etc/mysql'],
         }
 
-        exec { 'mysql-debconf-set-selections':
-            command     => "debconf-set-selections ${::mysql::params::config_dir}/debconf-selections",
+        exec { 'pf_mysql-debconf-set-selections':
+            command     => "debconf-set-selections ${::pf_mysql::params::config_dir}/debconf-selections",
             path        => [ '/usr/bin' ],
             user        => root,
             refreshonly => true,
-            subscribe   => File['mysql-debconf-selections'],
-            before      => Class['mysql::install'],
+            subscribe   => File['pf_mysql-debconf-selections'],
+            before      => Class['pf_mysql::install'],
         }
     }
 }

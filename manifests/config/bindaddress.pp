@@ -1,22 +1,22 @@
 #
-# == Class: mysql::config::bindaddress
+# == Class: pf_mysql::config::bindaddress
 #
 # Configure the bind address for MySQL
 #
-class mysql::config::bindaddress
+class pf_mysql::config::bindaddress
 (
     String $bind_address
 
-) inherits mysql::params
+) inherits pf_mysql::params
 {
 
-    file { 'mysql-bindaddress.cnf':
+    file { 'pf_mysql-bindaddress.cnf':
         ensure  => present,
-        name    => "${::mysql::params::fragment_dir}/bindaddress.cnf",
-        content => template('mysql/bindaddress.cnf.erb'),
+        name    => "${::pf_mysql::params::fragment_dir}/bindaddress.cnf",
+        content => template('pf_mysql/bindaddress.cnf.erb'),
         owner   => $::os::params::adminuser,
         group   => $::os::params::admingroup,
         mode    => '0644',
-        require => Class['mysql::config::fragmentdir'],
+        require => Class['pf_mysql::config::fragmentdir'],
     }
 }

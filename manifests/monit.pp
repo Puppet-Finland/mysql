@@ -1,18 +1,18 @@
 #
-# == Class: mysql::monit
+# == Class: pf_mysql::monit
 #
 # Setups monit rules for mysql
 #
-class mysql::monit
+class pf_mysql::monit
 (
     String $monitor_email
 
-) inherits mysql::params
+) inherits pf_mysql::params
 {
 
-    @monit::fragment { 'mysql-mysql.monit':
+    @monit::fragment { 'pf_mysql-pf_mysql.monit':
         basename   => 'mysql',
-        modulename => 'mysql',
+        modulename => 'pf_mysql',
         tag        => 'default',
     }
 }

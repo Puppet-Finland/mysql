@@ -1,5 +1,5 @@
 #
-# == Define: mysql::config::rootopts
+# == Define: pf_mysql::config::rootopts
 #
 # Setup options specific to the MySQL 'root' user.
 #
@@ -8,12 +8,12 @@
 # [*password*]
 #   The default database user password.
 #
-class mysql::config::rootopts
+class pf_mysql::config::rootopts
 (
     $password
 )
 {
-    mysql::config::useropts { 'root-useropts':
+    pf_mysql::config::useropts { 'root-useropts':
         owner    => 'root',
         dbuser   => 'root',
         password => $password,

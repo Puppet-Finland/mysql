@@ -1,9 +1,9 @@
 #
-# == Class: mysql::params
+# == Class: pf_mysql::params
 #
 # Defines some variables based on the operating system
 #
-class mysql::params {
+class pf_mysql::params {
 
     include ::os::params
 

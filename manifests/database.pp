@@ -1,5 +1,5 @@
 #
-# == Define: mysql::database
+# == Define: pf_mysql::database
 #
 # Create an empty MySQL/MariaDB database
 #
@@ -18,7 +18,7 @@
 #   MySQL credentials for the root user. Valid values are true and false
 #   (default).
 #
-define mysql::database
+define pf_mysql::database
 (
     Enum['present', 'absent'] $ensure = 'present',
     String                    $mysql_user = 'root',
@@ -31,26 +31,26 @@ define mysql::database
     $database = $title
 
     if $use_root_defaults {
-        $basecmd = "${::mysql::params::client_executable} --defaults-extra-file=/root/.my.cnf -e"
+        $basecmd = "${::pf_mysql::params::client_executable} --defaults-extra-file=/root/.my.cnf -e"
     } else {
         if $mysql_passwd {
-            $basecmd = "${::mysql::params::client_executable} -u ${mysql_user} -p ${mysql_passwd} -e"
+            $basecmd = "${::pf_mysql::params::client_executable} -u ${mysql_user} -p ${mysql_passwd} -e"
         } else {
-            $basecmd = "${::mysql::params::client_executable} -u ${mysql_user} -e"
+            $basecmd = "${::pf_mysql::params::client_executable} -u ${mysql_user} -e"
         }
     }
 
     if $ensure == 'present' {
-        exec { "mysql-create-database-${database}":
+        exec { "pf_mysql-create-database-${database}":
             command => "${basecmd} \"CREATE DATABASE ${database}\"",
             unless  => "${basecmd} \"SHOW DATABASES\"|grep ${database}",
-            require => Class['mysql::config::rootopts'],
+            require => Class['pf_mysql::config::rootopts'],
         }
     } elsif $ensure == 'absent' {
-        exec { "mysql-drop-database-${database}":
+        exec { "pf_mysql-drop-database-${database}":
             command => "${basecmd} \"DROP DATABASE ${database}\"",
             onlyif  => "${basecmd} \"SHOW DATABASES\"|grep ${database}",
-            require => Class['mysql::config::rootopts'],
+            require => Class['pf_mysql::config::rootopts'],
         }
     } else {
         fail("Invalid value ${ensure} for parameter \$ensure!")

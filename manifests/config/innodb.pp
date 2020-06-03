@@ -1,5 +1,5 @@
 #
-# == Class: mysql::config::innodb
+# == Class: pf_mysql::config::innodb
 #
 # Configure the InnoDB storage engine. This class has to be included manually 
 # because adding it to the main class would result in API explosion.
@@ -18,12 +18,12 @@
 #   Store each table in a different InnoDB file, which is in general a good
 #   idea. Valid values are true and false. Defaults to undef.
 #
-class mysql::config::innodb
+class pf_mysql::config::innodb
 (
     Optional[Integer] $buffer_pool_size = 33554432,
     Optional[Variant[Boolean, Enum['ON','OFF']]] $file_per_table = true
 
-) inherits mysql::params
+) inherits pf_mysql::params
 {
 
     $file_per_table_line = $file_per_table ? {
@@ -39,13 +39,13 @@ class mysql::config::innodb
         default => "innodb_buffer_pool_size = ${buffer_pool_size}"
     }
 
-    file { 'mysql-innodb.cnf':
+    file { 'pf_mysql-innodb.cnf':
         ensure  => present,
-        name    => "${::mysql::params::fragment_dir}/innodb.cnf",
-        content => template('mysql/innodb.cnf.erb'),
+        name    => "${::pf_mysql::params::fragment_dir}/innodb.cnf",
+        content => template('pf_mysql/innodb.cnf.erb'),
         owner   => $::os::params::adminuser,
         group   => $::os::params::admingroup,
         mode    => '0644',
-        require => Class['mysql::config::fragmentdir'],
+        require => Class['pf_mysql::config::fragmentdir'],
     }
 }

@@ -1,34 +1,34 @@
 #
-# == Class: mysql::config
+# == Class: pf_mysql::config
 #
 # Configure MySQL server
 #
-class mysql::config
+class pf_mysql::config
 (
     Optional[String] $bind_address,
     Optional[String] $sql_mode,
     Boolean          $manage_root_my_cnf,
     Optional[String] $root_password
 
-) inherits mysql::params
+) inherits pf_mysql::params
 {
 
-    include ::mysql::config::fragmentdir
+    include ::pf_mysql::config::fragmentdir
 
     if $bind_address {
-        class { '::mysql::config::bindaddress':
+        class { '::pf_mysql::config::bindaddress':
             bind_address => $bind_address,
         }
     }
 
     if $sql_mode {
-        class { '::mysql::config::sqlmode':
+        class { '::pf_mysql::config::sqlmode':
             sql_mode => $sql_mode,
         }
     }
 
     if $manage_root_my_cnf {
-        class { '::mysql::config::rootopts':
+        class { '::pf_mysql::config::rootopts':
             password => $root_password,
         }
     }

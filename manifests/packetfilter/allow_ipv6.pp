@@ -1,10 +1,10 @@
 #
-# == Define: mysql::packetfilter::allow_ipv6
+# == Define: pf_mysql::packetfilter::allow_ipv6
 #
 # Allow traffic to MySQL server through the firewall from the specified IP. Aped 
 # from bacula::storagedaemon::packetfilter::allow_ip.
 #
-define mysql::packetfilter::allow_ipv6 {
+define pf_mysql::packetfilter::allow_ipv6 {
 
     $source_v6 = $title ? {
             'any'   => undef,

@@ -1,13 +1,13 @@
 #
-# == Class: mysql
+# == Class: pf_mysql
 #
 # Class for installing and configuring MySQL and MariaDB servers. Currently only 
-# very basic configurations are covered by mysql::config in order to prevent the 
+# very basic configurations are covered by pf_mysql::config in order to prevent the 
 # amount of class parameters from exploding. If more specific or exotic 
 # configurations are required, it's probably best to create a new interface 
 # class based on this one, and add the extensions to it. Alternatively the other 
 # parts of this module (install, service, monit, etc.) can be reused, and a more 
-# static mysql config class and my.cnf template created.
+# static pf_mysql config class and my.cnf template created.
 #
 # It seems that different operating systems (Debian, Ubuntu, CentOS, FreeBSD) 
 # have taken very different approaches to managing mysql configurations. The 
@@ -80,13 +80,13 @@
 #   Email address for notifications from monit. Defaults to top-scope variable 
 #   $::servermonitor.
 # [*grants*]
-#   A hash of mysql::grant resources to realize.
+#   A hash of pf_mysql::grant resources to realize.
 # [*databases*]
-#   A hash of mysql::database resources to realize.
+#   A hash of pf_mysql::database resources to realize.
 #
 # == Examples
 #
-#   include mysql
+#   include pf_mysql
 #
 # == Authors
 #
@@ -100,7 +100,7 @@
 #
 # BSD-license. See file LICENSE for details.
 #
-class mysql
+class pf_mysql
 (
     Boolean $manage = true,
     Boolean $manage_config = true,
@@ -122,21 +122,21 @@ class mysql
 
 if $manage {
 
-    class { '::mysql::prequisites':
+    class { '::pf_mysql::prequisites':
         root_password => $root_password,
     }
 
-    class { '::mysql::mariadbrepo':
+    class { '::pf_mysql::mariadbrepo':
         use_mariadb_repo => $use_mariadb_repo,
         proxy_url        => $proxy_url,
     }
 
-    class { '::mysql::install':
+    class { '::pf_mysql::install':
         use_mariadb_repo => $use_mariadb_repo,
     }
 
     if $manage_config {
-        class { '::mysql::config':
+        class { '::pf_mysql::config':
             bind_address       => $bind_address,
             sql_mode           => $sql_mode,
             manage_root_my_cnf => $manage_root_my_cnf,
@@ -145,20 +145,20 @@ if $manage {
     }
 
     # Realize the defined GRANTs and databases
-    create_resources('mysql::grant', $grants)
-    create_resources('mysql::database', $databases)
+    create_resources('pf_mysql::grant', $grants)
+    create_resources('pf_mysql::database', $databases)
 
-    include ::mysql::service
+    include ::pf_mysql::service
 
     if $manage_packetfilter {
-        class { '::mysql::packetfilter':
+        class { '::pf_mysql::packetfilter':
             allow_addresses_ipv4 => $allow_addresses_ipv4,
             allow_addresses_ipv6 => $allow_addresses_ipv6,
         }
     }
 
     if $manage_monit {
-        class { '::mysql::monit':
+        class { '::pf_mysql::monit':
             monitor_email => $email,
         }
     }

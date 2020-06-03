@@ -1,13 +1,13 @@
 #
-# == Class: mysql::service
+# == Class: pf_mysql::service
 #
 # Configure MySQL to start on boot
 #
-class mysql::service inherits mysql::params {
+class pf_mysql::service inherits pf_mysql::params {
 
-    service { 'mysql-mysql':
+    service { 'pf_mysql-pf_mysql':
         enable  => true,
-        name    => $::mysql::params::service_name,
-        require => Class['mysql::install'],
+        name    => $::pf_mysql::params::service_name,
+        require => Class['pf_mysql::install'],
     }
 }

@@ -1,16 +1,16 @@
 #
-# == Class: mysql::prequisites
+# == Class: pf_mysql::prequisites
 #
-# Things to do before installing mysql/mariadb
+# Things to do before installing pf_mysql/mariadb
 #
-class mysql::prequisites
+class pf_mysql::prequisites
 (
     $root_password
 
-) inherits mysql::params
+) inherits pf_mysql::params
 {
     if $::osfamily == 'Debian' {
-        class { '::mysql::prequisites::debian':
+        class { '::pf_mysql::prequisites::debian':
             root_password => $root_password,
         }
     }

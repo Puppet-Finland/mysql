@@ -1,5 +1,5 @@
 #
-# == Define: mysql::grant
+# == Define: pf_mysql::grant
 #
 # Manage MySQL user privileges.
 #
@@ -7,7 +7,7 @@
 # MySQL/MariaDB does not seem to mind if the database being granted access to 
 # does not exist; the end result is simply that there are privileges pointing to 
 # non-existing databases. For discussion about root logins to MySQL have a look 
-# at the mysql::user define.
+# at the pf_mysql::user define.
 #
 # == Parameters
 #
@@ -20,7 +20,7 @@
 #   User's password. Defaults to undef (no password).
 # [*host*]
 #   The hostname or IP part of the user definition. Defaults to 'localhost'. For 
-#   discussion have a look at the mysql::user define.
+#   discussion have a look at the pf_mysql::user define.
 # [*database*]
 #   The database to grant privileges to. If no database is defined, assume '*' 
 #   (all databases).
@@ -29,7 +29,7 @@
 #   For example 'STATUS', 'ALL' or 'SELECT,UPDATE'. Defaults to 'USAGE' (=no 
 #   privileges) for safety.
 #
-define mysql::grant
+define pf_mysql::grant
 (
     String                   $user,
     Enum['present','absent'] $ensure = 'present',
@@ -39,31 +39,31 @@ define mysql::grant
     String                   $privileges = 'USAGE'
 )
 {
-    include ::mysql::params
+    include ::pf_mysql::params
 
     $db_quoted = $database ? { '*' => $database, default => "\\`${database}\\`" }
     $db_quoted_regexp = $database ? { '*' => '[*]', default => ".${database}." }
     $params = '--defaults-extra-file=/root/.my.cnf'
-    $basecmd = "${::mysql::params::client_executable} ${params} -e"
+    $basecmd = "${::pf_mysql::params::client_executable} ${params} -e"
     $add_grant = "GRANT ${privileges} ON ${db_quoted}.* TO '${user}'@'${host}'"
     $show_grants = "SHOW GRANTS FOR '${user}'@'${host}'"
     $grant_pattern = "GRANT ${privileges}.*ON.${db_quoted_regexp}\\.[*].TO.'${user}'@'${host}'"
 
     if $ensure == 'present' {
-        # See mysql::user for rationale on the backticks and backslashes.
-        exec { "mysql-grant-${privileges}-for-${user}-to-${database}-from-${host}":
+        # See pf_mysql::user for rationale on the backticks and backslashes.
+        exec { "pf_mysql-grant-${privileges}-for-${user}-to-${database}-from-${host}":
             command => "${basecmd} \"${add_grant} IDENTIFIED BY '${password}';\"",
             unless  => "${basecmd} \"${show_grants}\"|grep \"${grant_pattern}\"",
-            require => Class['mysql::config::rootopts'],
+            require => Class['pf_mysql::config::rootopts'],
         }
     } elsif $ensure == 'absent' {
-        exec { "mysql-revoke-${privileges}-for-${user}-to-${database}-from-${host}":
+        exec { "pf_mysql-revoke-${privileges}-for-${user}-to-${database}-from-${host}":
             command => "${basecmd} \"DROP USER '${user}'@'${host}';\"",
             onlyif  => "${basecmd} \"${show_grants}\"",
-            require => Class['mysql::config::rootopts'],
+            require => Class['pf_mysql::config::rootopts'],
         }
     } else {
-        notify { "Value of the \$ensure parameter (\"${ensure}\") in a mysql::grant resource is invalid. Supported values are 'present' and 'absent'.":
+        notify { "Value of the \$ensure parameter (\"${ensure}\") in a pf_mysql::grant resource is invalid. Supported values are 'present' and 'absent'.": # lint:ignore:140chars
             loglevel => warning,
         }
     }
